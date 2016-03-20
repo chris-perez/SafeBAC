@@ -1,0 +1,31 @@
+# Ignore Play! working directory #
+.DS_Store
+*.class
+*.log
+.settings/org.eclipse.core.resources.prefs
+*.cache
+*.xml
+bin/
+/db
+.eclipse
+/logs/
+/modules
+/project/project/*
+# Allow the Build.scala that builds the fix for ebean and Java 8
+!/project/project/Build.scala
+/project/target
+/target
+tmp/
+test-result
+server.pid
+*.iml
+*.eml
+/dist/
+.cache
+activator
+activator.bat
+activator-launch-1.3.2.jar
+/conf/application.conf
+/conf/application.test.conf
+/logs/unknownIthacaArtists.log
+*.index
