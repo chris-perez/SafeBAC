@@ -14,6 +14,6 @@ Play Framework server for alcohol consumption management app.
 4. Add SBT plugin to IntelliJ
 5. In terminal: git clone <git url>
 6. Open Intellij
-- import project from existing model
-- sbt
-- select the folder where the project is cloned
+  - import project from existing model
+  - sbt
+  - select the folder where the project is cloned
