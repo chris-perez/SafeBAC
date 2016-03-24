@@ -53,6 +53,9 @@ public class User extends Model{
     node.put("weight", weight);
     return node;
   }
+  /**
+   * put calcBAC function in here
+   * */
 
   private User(String name, String email, String password, String sex, int age, int weight, String authID) {
     this.name = name;
