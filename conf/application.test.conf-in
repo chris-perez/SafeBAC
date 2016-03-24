@@ -1,5 +1,0 @@
-include "application.conf"
-
-db.default.driver=com.mysql.jdbc.Driver
-db.default.url="jdbc:mysql://localhost/bac_test?sessionVariables=storage_engine=InnoDB"
-db.default.name="bac_test"
