@@ -40,7 +40,7 @@ db.default.user=root
 db.default.password="password"
 
 db.other.driver=com.mysql.jdbc.Driver
-db.other.url="jdbc:mysql://localhost/bac_test?sessionVariables=storage_engine=InnoDB"
+db.other.url="jdbc:mysql://localhost/bac_test"
 db.other.name="bac_test"
 db.other.user=root
 db.other.password="password"

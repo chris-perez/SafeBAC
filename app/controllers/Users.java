@@ -102,6 +102,40 @@ public class Users extends Controller {
     return ok(json);
   }
 
+  /**
+   * Logs out the user.
+   * @return 200
+   */
+  public static Result logoutUser() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return unauthorized(NO_SESSION);
+    }
+    u.authID = null;
+    u.save();
+    return noContent();
+  }
+
+  /**
+   * Get a user by looking up the auth token associated with the request.
+   */
+  public static User fromRequest() {
+    try {
+      if (!request().hasHeader("X-Auth-Token")) {
+        throw new Exception(NO_TOKEN.get("error").asText());
+      }
+      String token = request().getHeader("X-Auth-Token");
+      if (!User.idExists(token)) {
+        throw new Exception(NO_SESSION.get("error").asText());
+      }
+      return User.fromAuthID(token);
+    } catch (Exception ex) {
+      Logger.error(ex.getMessage(), ex.getCause());
+      return null;
+    }
+  }
+
   public static String genID() {
     byte[] randomValue = new  byte[25];
     MersenneGeneratorPlugin.generator.nextBytes(randomValue);
