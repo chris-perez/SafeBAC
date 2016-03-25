@@ -43,6 +43,14 @@ public class User extends Model{
     return find.where().eq("email", email).findUnique();
   }
 
+  public static boolean idExists(String token) {
+    return find.where().eq("authID", token).findRowCount() > 0;
+  }
+
+  public static User fromAuthID(String token) {
+    return find.where().eq("authID", token).findUnique();
+  }
+
   public ObjectNode toJson() {
     ObjectNode node = Json.newObject();
     node.put("id", id);
