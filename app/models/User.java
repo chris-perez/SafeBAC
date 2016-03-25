@@ -53,9 +53,24 @@ public class User extends Model{
     node.put("weight", weight);
     return node;
   }
-  /**
-   * put calcBAC function in here
-   * */
+  //must write update hours and update alcohol ounces consumed function -> how fast does alcohol filter out of system
+  //^whenever in app or whenever new drink?
+  //is graph of BAC over time or oz's of alcohol? Second easier
+  //catalog of drinks must have percentage of alcohol
+  //ounces changeable by person (pint, small glass, next to amounts)
+  public static int calculateBAC(double weight, String id, String sex, double alcConsumed, double hoursPassed) { // Changed void to int
+    double sexRatio;
+    if(sex.equals("female")) {
+      sexRatio = .66;
+    }else{
+      sexRatio = .73;
+    }
+    double bac = ((alcConsumed * 5.14)/(weight * sexRatio)) - (.015 * hoursPassed);
+    int bacPercentage = (int)(bac*100);
+    System.out.println("You have "+ bacPercentage+"% BAC");
+    return bacPercentage; // Added return
+  }
+
 
   private User(String name, String email, String password, String sex, int age, int weight, String authID) {
     this.name = name;

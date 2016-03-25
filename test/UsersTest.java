@@ -1,6 +1,7 @@
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.Assert;
 import org.junit.Test;
 import play.Logger;
 import play.libs.Json;
@@ -23,7 +24,10 @@ public class UsersTest {
   int TEST_WEIGHT = 160;
   int TEST_AGE = 18;
   String TEST_AUTH_TOKEN = "";
-
+  @Test
+  public final void testFemaleBAC() {
+    Assert.assertEquals(9,CalcBAC.calculateBAC(115,"id","female",2,3));
+  }
   @Test
   public void userTest() {
     running(fakeApplication(), new Runnable() {
