@@ -14,6 +14,13 @@ public class UserToDrink {
   public Long id;
   public User user;
   public Drink drink;
+  public Double volume;
   public DateTime time;
-  public double volume;
+
+  public UserToDrink(User user, Drink drink, Double volume, DateTime time) {
+    this.user = user;
+    this.drink = drink;
+    this.volume = volume;
+    this.time = time;
+  }
 }

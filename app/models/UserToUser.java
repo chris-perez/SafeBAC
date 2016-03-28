@@ -12,6 +12,11 @@ public class UserToUser {
   public Long id;
   public User user1;
   public User user2;
-  public Boolean user1IsVisible;
-  public Boolean user2IsVisible;
+  public Boolean user1IsVisible = false;
+  public Boolean user2IsVisible = false;
+
+  public UserToUser(User user1, User user2) {
+    this.user1 = user1;
+    this.user2 = user2;
+  }
 }
