@@ -6,6 +6,7 @@ import play.libs.Json;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.List;
 
 /**
  * Created by chris_000 on 3/21/2016.
@@ -21,6 +22,9 @@ public class User extends Model{
   public Integer age;
   public Integer weight;
   public String authID;
+
+  public List<Drink> drinks;
+  public List<User> friends;
 
   public static Finder<Long, User> find = new Finder<>(Long.class, User.class);
 
