@@ -78,13 +78,13 @@ public class User extends Model{
   }
 
   public static class UserBuilder {
-    private String name;
-    private String email;
-    private String password;
-    private String sex;
-    private Integer age;
-    private Integer weight;
-    private String authID;
+    private String name = "";
+    private String email = "";
+    private String password = "";
+    private String sex = "";
+    private Integer age = 0;
+    private Integer weight = 0;
+    private String authID = "";
 
     public UserBuilder setName(String name) {
       this.name = name;

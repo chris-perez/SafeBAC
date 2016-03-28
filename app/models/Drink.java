@@ -13,5 +13,11 @@ public class Drink extends Model{
   @Id
   public Long id;
   public String name;
-  public double percentAlcohol;
+  public Double percentAlcohol;
+
+  public Drink(String name, Double percentAlcohol) {
+    this.name = name;
+    this.percentAlcohol = percentAlcohol;
+    this.save();
+  }
 }
