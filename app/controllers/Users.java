@@ -136,6 +136,9 @@ public class Users extends Controller {
     }
   }
 
+  /**
+   * @return randomly generated authID
+   */
   public static String genID() {
     byte[] randomValue = new  byte[25];
     MersenneGeneratorPlugin.generator.nextBytes(randomValue);

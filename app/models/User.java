@@ -47,14 +47,27 @@ public class User extends Model{
     return find.where().eq("email", email).findUnique();
   }
 
+  /**
+   * Finds if there is a user that has the given authID
+   * @param token authID to search for
+   * @return true if there is a user with the given authID
+   */
   public static boolean idExists(String token) {
     return find.where().eq("authID", token).findRowCount() > 0;
   }
 
+  /**
+   * Returns a user with the authID given
+   * @param token authID to search for
+   * @return User that matches the given authID
+   */
   public static User fromAuthID(String token) {
     return find.where().eq("authID", token).findUnique();
   }
 
+  /**
+   * @return Json ObjectNode that contains necessary info about the user
+   */
   public ObjectNode toJson() {
     ObjectNode node = Json.newObject();
     node.put("id", id);
