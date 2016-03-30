@@ -3,6 +3,7 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
+import org.joda.time.DateTime;
 import play.Logger;
 import play.api.libs.Codecs;
 import play.libs.Crypto;
@@ -36,7 +37,6 @@ public class Users extends Controller {
       return badRequest(INCORRECT_FIELDS);
     }
     User u;
-    User.UserBuilder userBuilder = new User.UserBuilder();
 
     if (body.has("email") && body.has("password") && body.has("age") && body.has("name") && body.has("sex")
         && body.has("weight")) {
@@ -46,20 +46,20 @@ public class Users extends Controller {
         return badRequest(ACCOUNT_EXISTS);
       }
       //TODO: add password requirements
-      userBuilder = userBuilder.setEmail(email)
-          .setPassword(Crypto.sign(body.get("password").asText()))
-          .setAge(body.get("age").asInt())
-          .setName(body.get("name").asText())
-          .setWeight(body.get("weight").asInt())
-          .setSex(body.get("sex").asText());
+      String name = body.get("name").asText();
+      String password = Crypto.sign(body.get("password").asText());
+      int weight = body.get("weight").asInt();
+      String sex = body.get("sex").asText();
+      DateTime birthDate = new DateTime(body.get("birthDate"));
 
-      u = userBuilder.setAuthID(genID()).build();
+      u = new User(name, email, password, sex, birthDate, weight, genID());
+
     }else{
       return badRequest(INCORRECT_FIELDS);
     }
 
     ObjectNode json = u.toJson();
-    json.put("authID", u.authID);
+    json.put("authID", u.getAuthID());
     return ok(json);
   }
 

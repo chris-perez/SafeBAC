@@ -1,6 +1,7 @@
 package models;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.joda.time.DateTime;
 import play.db.ebean.Model;
 import play.libs.Json;
 
@@ -14,17 +15,17 @@ import java.util.List;
 @Entity
 public class User extends Model{
   @Id
-  public Long id;
-  public String name;
-  public String email;
-  public String password;
-  public String sex;
-  public Integer age;
-  public Integer weight;
-  public String authID;
+  Long id;
+  String name;
+  String email;
+  String password;
+  String sex;
+  DateTime birthDate;
+  Integer weight;
+  String authID;
 
-  public List<Drink> drinks;
-  public List<User> friends;
+  List<Drink> drinks;
+  List<User> friends;
 
   public static Finder<Long, User> find = new Finder<>(Long.class, User.class);
 
@@ -74,68 +75,76 @@ public class User extends Model{
     node.put("name", name);
     node.put("email", email);
     node.put("sex", sex);
-    node.put("age", age);
+    node.put("birthDate", birthDate.toString());
     node.put("weight", weight);
     return node;
   }
 
-  private User(String name, String email, String password, String sex, int age, int weight, String authID) {
+  public User(String name, String email, String password, String sex, DateTime birthDate, int weight, String authID) {
     this.name = name;
     this.email = email;
     this.password = password;
     this.sex = sex;
-    this.age = age;
+    this.birthDate = birthDate;
     this.weight = weight;
     this.authID = authID;
     this.save();
   }
 
-  public static class UserBuilder {
-    private String name = "";
-    private String email = "";
-    private String password = "";
-    private String sex = "";
-    private Integer age = 0;
-    private Integer weight = 0;
-    private String authID = "";
 
-    public UserBuilder setName(String name) {
-      this.name = name;
-      return this;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public UserBuilder setEmail(String email) {
-      this.email = email;
-      return this;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public UserBuilder setPassword(String password) {
-      this.password = password;
-      return this;
-    }
+  public String getEmail() {
+    return email;
+  }
 
-    public UserBuilder setSex(String sex) {
-      this.sex = sex;
-      return this;
-    }
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-    public UserBuilder setAge(Integer age) {
-      this.age = age;
-      return this;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public UserBuilder setWeight(Integer weight) {
-      this.weight = weight;
-      return this;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public UserBuilder setAuthID(String authID) {
-      this.authID = authID;
-      return this;
-    }
+  public String getSex() {
+    return sex;
+  }
 
-    public User build() {
-      return new User(name, email, password, sex, age, weight, authID);
-    }
+  public void setSex(String sex) {
+    this.sex = sex;
+  }
+
+  public DateTime getBirthDate() {
+    return birthDate;
+  }
+
+  public void setBirthDate(DateTime birthDate) {
+    this.birthDate = birthDate;
+  }
+
+  public Integer getWeight() {
+    return weight;
+  }
+
+  public void setWeight(Integer weight) {
+    this.weight = weight;
+  }
+
+  public String getAuthID() {
+    return authID;
+  }
+
+  public void setAuthID(String authID) {
+    this.authID = authID;
   }
 }

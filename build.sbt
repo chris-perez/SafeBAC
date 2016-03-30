@@ -2,7 +2,7 @@ name := "safebac"
 
 version := "1.0"
 
-lazy val `safebac` = (project in file(".")).enablePlugins(PlayJava)
+lazy val `safebac` = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
 
 scalaVersion := "2.11.1"
 
@@ -16,4 +16,4 @@ libraryDependencies ++= Seq(
 
 javaOptions in Test += "-Dconfig.file=conf/application.test.conf"
 
-unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
+unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )
