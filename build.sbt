@@ -2,7 +2,7 @@ name := "safebac"
 
 version := "1.0"
 
-lazy val `safebac` = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
+lazy val `safebac` = (project in file(".")).enablePlugins(PlayJava)
 
 scalaVersion := "2.11.1"
 

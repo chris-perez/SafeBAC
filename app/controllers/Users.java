@@ -50,9 +50,16 @@ public class Users extends Controller {
       String password = Crypto.sign(body.get("password").asText());
       int weight = body.get("weight").asInt();
       String sex = body.get("sex").asText();
-      DateTime birthDate = new DateTime(body.get("birthDate"));
+      if (!(sex.equals("male")) || sex.equals("female")) {
+        return badRequest(INCORRECT_FIELDS);
+      }
 
-      u = new User(name, email, password, sex, birthDate, weight, genID());
+      try {
+        DateTime birthDate = new DateTime(body.get("birthDate").asLong());
+        u = new User(name, email, password, sex, birthDate, weight, genID());
+      } catch (Exception e) {
+        return badRequest(INCORRECT_FIELDS);
+      }
 
     }else{
       return badRequest(INCORRECT_FIELDS);
@@ -85,9 +92,9 @@ public class Users extends Controller {
       }
 
       u = User.fromEmail(email);
-      if (u.password.equals(password)) {
-        if (u.authID == null) {
-          u.authID = genID();
+      if (u.getPassword().equals(password)) {
+        if (u.getAuthID() == null) {
+          u.setAuthID(genID());
         }
       } else {
         return badRequest(INCORRECT_PASSWORD);
@@ -98,7 +105,7 @@ public class Users extends Controller {
 
     u.update();
     ObjectNode json = u.toJson();
-    json.put("authID", u.authID);
+    json.put("authID", u.getAuthID());
     return ok(json);
   }
 
@@ -112,7 +119,7 @@ public class Users extends Controller {
     if (u == null) {
       return unauthorized(NO_SESSION);
     }
-    u.authID = null;
+    u.setAuthID(null);
     u.save();
     return noContent();
   }

@@ -12,11 +12,11 @@ import javax.persistence.Id;
 @Entity
 public class UserToDrink extends Model {
   @Id
-  public Long id;
-  public User user;
-  public Drink drink;
-  public Double volume;
-  public DateTime time;
+  Long id;
+  User user;
+  Drink drink;
+  Double volume;
+  DateTime time;
 
   public static Finder<Long, UserToDrink> find = new Finder<>(Long.class, UserToDrink.class);
 

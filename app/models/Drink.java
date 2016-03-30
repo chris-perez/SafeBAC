@@ -11,9 +11,9 @@ import javax.persistence.Id;
 @Entity
 public class Drink extends Model{
   @Id
-  public Long id;
-  public String name;
-  public Double percentAlcohol;
+  Long id;
+  String name;
+  Double percentAlcohol;
 
   public Drink(String name, Double percentAlcohol) {
     this.name = name;
