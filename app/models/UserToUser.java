@@ -25,6 +25,10 @@ public class UserToUser extends Model {
     this.save();
   }
 
+  public Long getId() {
+    return id;
+  }
+
   public Boolean getUser1IsVisible() {
     return user1IsVisible;
   }

@@ -27,4 +27,8 @@ public class UserToDrink extends Model {
     this.time = time;
     this.save();
   }
+
+  public Long getId() {
+    return id;
+  }
 }

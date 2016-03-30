@@ -38,7 +38,7 @@ public class Users extends Controller {
     }
     User u;
 
-    if (body.has("email") && body.has("password") && body.has("age") && body.has("name") && body.has("sex")
+    if (body.has("email") && body.has("password") && body.has("birthDate") && body.has("name") && body.has("sex")
         && body.has("weight")) {
       //TODO: Add email requirements.
       String email = body.get("email").asText();

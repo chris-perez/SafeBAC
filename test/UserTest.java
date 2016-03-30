@@ -63,10 +63,10 @@ public class UserTest {
     running(fakeApplication(), new Runnable() {
       @Override
       public void run() {
-        User u = new User.UserBuilder().build();
+        User u = new User("name", "email", "password", "male", new DateTime(), 160, "authID");
         Drink d = new Drink("name", .07);
         UserToDrink u2d = new UserToDrink(u, d, .5, new DateTime());
-        UserToDrink u2d2 = UserToDrink.find.byId(u2d.id);
+        UserToDrink u2d2 = UserToDrink.find.byId(u2d.getId());
         assertThat(u2d2).isNotNull();
         u2d.delete();
         u.delete();
@@ -80,10 +80,10 @@ public class UserTest {
     running(fakeApplication(), new Runnable() {
       @Override
       public void run() {
-        User u = new User.UserBuilder().build();
-        User u2 = new User.UserBuilder().build();
+        User u = new User("name", "email", "password", "male", new DateTime(), 160, "authID");
+        User u2 = new User("name2", "email2", "password2", "male", new DateTime(), 180, "authID2");
         UserToUser u2u = new UserToUser(u, u2);
-        UserToUser u2u2 = UserToUser.find.byId(u2u.id);
+        UserToUser u2u2 = UserToUser.find.byId(u2u.getId());
         assertThat(u2u2).isNotNull();
         u2u.delete();
         u.delete();
