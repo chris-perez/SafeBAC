@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
 import org.junit.*;
 
+import play.Logger;
+import play.libs.Json;
 import play.mvc.*;
 import play.test.*;
 import play.data.DynamicForm;
@@ -26,19 +30,5 @@ import static org.fest.assertions.Assertions.*;
 *
 */
 public class ApplicationTest {
-
-    @Test
-    public void simpleCheck() {
-        int a = 1 + 1;
-        assertThat(a).isEqualTo(2);
-    }
-
-    @Test
-    public void renderTemplate() {
-        Content html = (Content) views.html.index.render("Your new application is ready.");
-        assertThat(contentType(html)).isEqualTo("text/html");
-        assertThat(contentAsString(html)).contains("Your new application is ready.");
-    }
-
 
 }

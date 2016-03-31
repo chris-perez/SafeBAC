@@ -63,6 +63,41 @@ public class Users extends Controller {
     return ok(json);
   }
 
+  public static Result changeInfoUser() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    JsonNode body = request().body().asJson();
+
+    if (body == null || body.size() < 6) {
+      return badRequest(INCORRECT_FIELDS);
+    }
+    User u;
+    User.UserBuilder userBuilder = new User.UserBuilder();
+
+    if (body.has("email") && body.has("password") && body.has("age") && body.has("name") && body.has("sex")
+            && body.has("weight")) {
+      //TODO: Add email requirements.
+      String email = body.get("email").asText();
+      if (User.userExists(email)) {
+        return badRequest(ACCOUNT_EXISTS);
+      }
+      //TODO: add password requirements
+      userBuilder = userBuilder.setEmail(email)
+              .setPassword(Crypto.sign(body.get("password").asText()))
+              .setAge(body.get("age").asInt())
+              .setName(body.get("name").asText())
+              .setWeight(body.get("weight").asInt())
+              .setSex(body.get("sex").asText());
+
+      u = userBuilder.setAuthID(genID()).build();
+    }else{
+      return badRequest(INCORRECT_FIELDS);
+    }
+
+    ObjectNode json = u.toJson();
+    json.put("authID", u.authID);
+    return ok(json);
+  }
+
   /**
    * Logs in the user if the user exists.
    * @return AuthID of the session.
