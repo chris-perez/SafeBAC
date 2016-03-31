@@ -3,6 +3,7 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
+import org.joda.time.DateTime;
 import play.Logger;
 import play.api.libs.Codecs;
 import play.libs.Crypto;
@@ -36,9 +37,8 @@ public class Users extends Controller {
       return badRequest(INCORRECT_FIELDS);
     }
     User u;
-    User.UserBuilder userBuilder = new User.UserBuilder();
 
-    if (body.has("email") && body.has("password") && body.has("age") && body.has("name") && body.has("sex")
+    if (body.has("email") && body.has("password") && body.has("birthDate") && body.has("name") && body.has("sex")
         && body.has("weight")) {
       //TODO: Add email requirements.
       String email = body.get("email").asText();
@@ -46,20 +46,27 @@ public class Users extends Controller {
         return badRequest(ACCOUNT_EXISTS);
       }
       //TODO: add password requirements
-      userBuilder = userBuilder.setEmail(email)
-          .setPassword(Crypto.sign(body.get("password").asText()))
-          .setAge(body.get("age").asInt())
-          .setName(body.get("name").asText())
-          .setWeight(body.get("weight").asInt())
-          .setSex(body.get("sex").asText());
+      String name = body.get("name").asText();
+      String password = Crypto.sign(body.get("password").asText());
+      int weight = body.get("weight").asInt();
+      String sex = body.get("sex").asText();
+      if (!(sex.equals("male")) || sex.equals("female")) {
+        return badRequest(INCORRECT_FIELDS);
+      }
 
-      u = userBuilder.setAuthID(genID()).build();
+      try {
+        DateTime birthDate = new DateTime(body.get("birthDate").asLong());
+        u = new User(name, email, password, sex, birthDate, weight, genID());
+      } catch (Exception e) {
+        return badRequest(INCORRECT_FIELDS);
+      }
+
     }else{
       return badRequest(INCORRECT_FIELDS);
     }
 
     ObjectNode json = u.toJson();
-    json.put("authID", u.authID);
+    json.put("authID", u.getAuthID());
     return ok(json);
   }
 
@@ -85,9 +92,9 @@ public class Users extends Controller {
       }
 
       u = User.fromEmail(email);
-      if (u.password.equals(password)) {
-        if (u.authID == null) {
-          u.authID = genID();
+      if (u.getPassword().equals(password)) {
+        if (u.getAuthID() == null) {
+          u.setAuthID(genID());
         }
       } else {
         return badRequest(INCORRECT_PASSWORD);
@@ -98,10 +105,47 @@ public class Users extends Controller {
 
     u.update();
     ObjectNode json = u.toJson();
-    json.put("authID", u.authID);
+    json.put("authID", u.getAuthID());
     return ok(json);
   }
 
+  /**
+   * Logs out the user.
+   * @return 200
+   */
+  public static Result logoutUser() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return unauthorized(NO_SESSION);
+    }
+    u.setAuthID(null);
+    u.save();
+    return noContent();
+  }
+
+  /**
+   * Get a user by looking up the auth token associated with the request.
+   */
+  public static User fromRequest() {
+    try {
+      if (!request().hasHeader("X-Auth-Token")) {
+        throw new Exception(NO_TOKEN.get("error").asText());
+      }
+      String token = request().getHeader("X-Auth-Token");
+      if (!User.idExists(token)) {
+        throw new Exception(NO_SESSION.get("error").asText());
+      }
+      return User.fromAuthID(token);
+    } catch (Exception ex) {
+      Logger.error(ex.getMessage(), ex.getCause());
+      return null;
+    }
+  }
+
+  /**
+   * @return randomly generated authID
+   */
   public static String genID() {
     byte[] randomValue = new  byte[25];
     MersenneGeneratorPlugin.generator.nextBytes(randomValue);

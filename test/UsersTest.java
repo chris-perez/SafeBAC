@@ -39,7 +39,7 @@ public class UsersTest {
         assertThat(content.has("email")).isTrue();
         assertThat(content.has("sex")).isTrue();
         assertThat(content.has("weight")).isTrue();
-        assertThat(content.has("age")).isTrue();
+        assertThat(content.has("birthDate")).isTrue();
       }
 
       private void createUser() {
@@ -48,7 +48,7 @@ public class UsersTest {
             .put("email", TEST_EMAIL)
             .put("password", TEST_PASSWORD)
             .put("name", TEST_NAME)
-            .put("age", TEST_AGE)
+            .put("birthDate", 0)
             .put("sex", TEST_SEX)
             .put("weight", TEST_WEIGHT);
 
@@ -74,12 +74,20 @@ public class UsersTest {
         TEST_AUTH_TOKEN = content.get("authID").asText();
       }
 
+      private void logoutUser() {
+        // Logout
+        result = callAction(controllers.routes.ref.Users.logoutUser(),
+            fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
+        assertThat(status(result)).isEqualTo(NO_CONTENT);
+      }
+
       @Override
       public void run() {
         Ebean.beginTransaction();
         try {
           createUser();
           loginUser();
+          logoutUser();
         } finally {
           Ebean.rollbackTransaction();
         }

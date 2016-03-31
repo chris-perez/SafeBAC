@@ -10,4 +10,5 @@ GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
 POST        /user/auth           controllers.Users.createUser()
 PUT         /user/auth           controllers.Users.loginUser()
+DELETE      /user/auth           controllers.Users.logoutUser()
     

@@ -2,11 +2,22 @@ package models;
 
 import play.db.ebean.Model;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 /**
  * Created by chris_000 on 3/22/2016.
  */
+@Entity
 public class Drink extends Model{
-  public String name;
-  public double volume;
-  public double percentAlcohol;
+  @Id
+  Long id;
+  String name;
+  Double percentAlcohol;
+
+  public Drink(String name, Double percentAlcohol) {
+    this.name = name;
+    this.percentAlcohol = percentAlcohol;
+    this.save();
+  }
 }
