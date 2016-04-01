@@ -66,6 +66,7 @@ public class User extends Model{
   //is graph of BAC over time or oz's of alcohol? Second easier
   //catalog of drinks must have percentage of alcohol
   //ounces changeable by person (pint, small glass, next to amounts)
+  //alcConsumed = percentage * total ounces drank -> alcohol ounces drank
   public static int calculateBAC(double weight, String id, String sex, double alcConsumed, double hoursPassed) { // Changed void to int
     double sexRatio;
     if(sex.equals("female")) {

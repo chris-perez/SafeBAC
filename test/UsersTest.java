@@ -1,6 +1,7 @@
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.User;
 import org.junit.Assert;
 import org.junit.Test;
 import play.Logger;
@@ -24,10 +25,24 @@ public class UsersTest {
   int TEST_WEIGHT = 160;
   int TEST_AGE = 18;
   String TEST_AUTH_TOKEN = "";
+
   @Test
-  public final void testFemaleBAC() {
-    Assert.assertEquals(9,CalcBAC.calculateBAC(115,"id","female",2,3));
+  public void testBAC() {
+    running(fakeApplication(), new Runnable() {
+
+      private void checkBAC(){
+        Assert.assertEquals(9,User.calculateBAC(115,"id","female",2,3));
+        Assert.assertEquals(9,User.calculateBAC(205,"id","male",4.68,4.25));
+        Assert.assertEquals(10,User.calculateBAC(170,"id","male",4.2,4.5));
+      }
+
+      @Override
+      public void run() {
+        checkBAC();
+      }
+    });
   }
+
   @Test
   public void userTest() {
     running(fakeApplication(), new Runnable() {
