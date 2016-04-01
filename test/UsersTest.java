@@ -58,7 +58,7 @@ public class UsersTest {
         assertThat(content.has("email")).isTrue();
         assertThat(content.has("sex")).isTrue();
         assertThat(content.has("weight")).isTrue();
-        assertThat(content.has("age")).isTrue();
+        assertThat(content.has("birthDate")).isTrue();
       }
 
       private void createUser() {
@@ -67,7 +67,7 @@ public class UsersTest {
             .put("email", TEST_EMAIL)
             .put("password", TEST_PASSWORD)
             .put("name", TEST_NAME)
-            .put("age", TEST_AGE)
+            .put("birthDate", 0)
             .put("sex", TEST_SEX)
             .put("weight", TEST_WEIGHT);
 

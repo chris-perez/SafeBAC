@@ -11,10 +11,14 @@ import javax.persistence.Id;
 @Entity
 public class Drink extends Model{
   @Id
-  public Long id;
-  public String name;
-  public double volume;
-  public double percentAlcohol;
-
+  Long id;
+  String name;
+  Double percentAlcohol;
   public static Finder<Long, Drink> find = new Finder<>(Long.class, Drink.class);
+
+  public Drink(String name, Double percentAlcohol) {
+    this.name = name;
+    this.percentAlcohol = percentAlcohol;
+    this.save();
+  }
 }
