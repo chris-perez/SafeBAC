@@ -13,20 +13,21 @@ import javax.persistence.Id;
 @Entity
 public class Drink extends Model {
   @Id
-  public String name;
-  public double abv; //alcohol by volume
-
-  public ObjectNode toJson() {
-    ObjectNode node = Json.newObject();
-    node.put("name", name);
-    node.put("abv", abv);
-    return node;
-  }
+  Long id;
+  String name;
+  Double abv; //alcohol by volume
 
   private Drink(String name, double abv) {
     this.name = name;
     this.abv = abv;
     this.save();
+  }
+  
+  public ObjectNode toJson() {
+    ObjectNode node = Json.newObject();
+    node.put("name", name);
+    node.put("abv", abv);
+    return node;
   }
 
   public static class DrinkBuilder {
