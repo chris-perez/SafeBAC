@@ -79,22 +79,18 @@ public class UsersTest {
         TEST_AUTH_TOKEN = content.get("authID").asText();
       }
 
-      private void userChangeInfo() {
+      private void updateProfile() {
         // Login
         request = Json.newObject()
                 .put("email", TEST_EMAIL)
-                .put("password", TEST_PASSWORD)
                 .put("name", CHANGE_NAME)
                 .put("age", CHANGE_AGE)
                 .put("sex", CHANGE_SEX)
                 .put("weight", CHANGE_WEIGHT);
-        result = callAction(controllers.routes.ref.Users.changeInfoUser(),
-                fakeRequest().withJsonBody(request));
+        result = callAction(controllers.routes.ref.Users.updateProfile(),
+                fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN).withJsonBody(request));
         Logger.info("Login Result: " + contentAsString(result));
         assertThat(status(result)).isEqualTo(OK);
-        content = Json.parse(contentAsString(result));
-        validateUser(content);
-        TEST_AUTH_TOKEN = content.get("authID").asText();
       }
 
       private void logoutUser() {
@@ -110,6 +106,7 @@ public class UsersTest {
         try {
           createUser();
           loginUser();
+          updateProfile();
           logoutUser();
         } finally {
           Ebean.rollbackTransaction();

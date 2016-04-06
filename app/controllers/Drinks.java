@@ -3,7 +3,8 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.Drink;
-import org.testng.annotations.Test;
+import models.User;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -12,24 +13,28 @@ import play.mvc.Result;
  * Created by Noah on 4/6/16.
  */
 public class Drinks extends Controller {
+    public static final ObjectNode NO_SESSION = Json.newObject().put("error", "There is no current session using that key");
+    public static final ObjectNode INCORRECT_FIELDS = Json.newObject().put("error", "Incorrect fields.");
     
     public static Result addDrink()
     {
-        String name="Svedka";
-        double abv=40.0;
         response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        User u = Users.fromRequest();
+        if (u == null) {
+            return badRequest(NO_SESSION);
+        }
         JsonNode body = request().body().asJson();
+        Long drinkID = body.get("id").asLong();
+        Double volume = body.get("volume").asDouble();
+        Drink d = Drink.findByID(drinkID);
 
-        Drink d;
-        Drink.DrinkBuilder drinkBuilder = new Drink.DrinkBuilder();
+        if (d == null) {
+            return badRequest(INCORRECT_FIELDS);
+        }
 
-        drinkBuilder = drinkBuilder.setName(name)
-                .setAbv(abv);
+        u.addDrink(d, volume);
 
-        d = drinkBuilder.setName(name).build();
-
-        ObjectNode json = d.toJson();
-        json.put("name", d.name);
-        return ok(json);
+        //TODO: return current BAC
+        return ok(u.toJson());
     }
 }

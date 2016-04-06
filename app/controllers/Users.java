@@ -70,39 +70,44 @@ public class Users extends Controller {
     return ok(json);
   }
 
-  public static Result changeInfoUser() {
+  public static Result updateProfile() {
     response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
     JsonNode body = request().body().asJson();
 
-    if (body == null || body.size() < 6) {
-      return badRequest(INCORRECT_FIELDS);
-    }
-    User u;
-    User.UserBuilder userBuilder = new User.UserBuilder();
-
-    if (body.has("email") && body.has("password") && body.has("age") && body.has("name") && body.has("sex")
-            && body.has("weight")) {
-      //TODO: Add email requirements.
-      String email = body.get("email").asText();
-      if (User.userExists(email)) {
-        return badRequest(ACCOUNT_EXISTS);
-      }
-      //TODO: add password requirements
-      userBuilder = userBuilder.setEmail(email)
-              .setPassword(Crypto.sign(body.get("password").asText()))
-              .setAge(body.get("age").asInt())
-              .setName(body.get("name").asText())
-              .setWeight(body.get("weight").asInt())
-              .setSex(body.get("sex").asText());
-
-      u = userBuilder.setAuthID(genID()).build();
-    }else{
+    if (body == null || body.size() < 1) {
       return badRequest(INCORRECT_FIELDS);
     }
 
-    ObjectNode json = u.toJson();
-    json.put("authID", u.authID);
-    return ok(json);
+
+    User u = Users.fromRequest();
+    if (u == null) {
+      return badRequest(NO_SESSION);
+    }
+
+    if (body.has("email")){
+      u.setEmail(body.get("email").asText());
+    }
+
+    if (body.has("birthDate")){
+      DateTime date = new DateTime(body.get("birthDate").asLong());
+      u.setBirthDate(date);
+    }
+
+    if (body.has("name")){
+      u.setName(body.get("name").asText());
+    }
+
+    if (body.has("sex")){
+      u.setSex(body.get("sex").asText());
+    }
+
+    if (body.has("weight")){
+      u.setWeight(body.get("weight").asInt());
+    }
+
+    u.save();
+
+    return ok(u.toJson());
   }
 
   /**

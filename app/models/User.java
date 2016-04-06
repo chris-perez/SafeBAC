@@ -24,11 +24,17 @@ public class User extends Model{
   Integer weight;
   String authID;
 
-  List<Drink> drinks;
-  List<User> friends;
+  List<UserToDrink> userToDrinks;
+  List<UserToUser> userToUsers;
 
   public static Finder<Long, User> find = new Finder<>(Long.class, User.class);
 
+  public void addDrink(Drink drink, Double volume) {
+    UserToDrink u2d = new UserToDrink(this, drink, volume, DateTime.now());
+    this.userToDrinks.add(u2d);
+    u2d.save();
+    this.save();
+  }
 
   /**
    * Searches for user in database by name

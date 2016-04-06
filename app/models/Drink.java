@@ -17,6 +17,8 @@ public class Drink extends Model {
   String name;
   Double abv; //alcohol by volume
 
+  public static Finder<Long, Drink> find = new Finder<>(Long.class, Drink.class);
+
   private Drink(String name, double abv) {
     this.name = name;
     this.abv = abv;
@@ -25,27 +27,13 @@ public class Drink extends Model {
   
   public ObjectNode toJson() {
     ObjectNode node = Json.newObject();
+    node.put("id", id);
     node.put("name", name);
     node.put("abv", abv);
     return node;
   }
 
-  public static class DrinkBuilder {
-    private String name;
-    private double abv;
-
-    public DrinkBuilder setName(String name) {
-      this.name = name;
-      return this;
-    }
-
-    public DrinkBuilder setAbv(double abv) {
-      this.abv = abv;
-      return this;
-    }
-
-    public Drink build() {
-          return new Drink(name, abv);
-      }
+  public static Drink findByID(Long id) {
+    return find.byId(id);
   }
 }
