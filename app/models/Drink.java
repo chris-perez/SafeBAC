@@ -42,7 +42,8 @@ public class Drink extends Model {
       this.abv = abv;
       return this;
     }
-      public Drink build() {
+
+    public Drink build() {
           return new Drink(name, abv);
       }
   }
