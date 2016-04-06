@@ -92,7 +92,7 @@ public class User extends Model{
     }else{
       sexRatio = .73;
     }
-    double bac = ((alcConsumed * 5.14)/(weight * sexRatio)) - (.015 * hoursPassed);
+    double bac = ((alcConsumed * 5.14)/(weight * sexRatio)) - (.015 * hoursPassed);//alcohol burns off at about .015 an hour
     int bacPercentage = (int)(bac*100);
     System.out.println("You have "+ bacPercentage+"% BAC");
     return bacPercentage; // Added return
