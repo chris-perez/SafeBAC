@@ -70,6 +70,46 @@ public class Users extends Controller {
     return ok(json);
   }
 
+  public static Result updateProfile() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    JsonNode body = request().body().asJson();
+
+    if (body == null || body.size() < 1) {
+      return badRequest(INCORRECT_FIELDS);
+    }
+
+
+    User u = Users.fromRequest();
+    if (u == null) {
+      return badRequest(NO_SESSION);
+    }
+
+    if (body.has("email")){
+      u.setEmail(body.get("email").asText());
+    }
+
+    if (body.has("birthDate")){
+      DateTime date = new DateTime(body.get("birthDate").asLong());
+      u.setBirthDate(date);
+    }
+
+    if (body.has("name")){
+      u.setName(body.get("name").asText());
+    }
+
+    if (body.has("sex")){
+      u.setSex(body.get("sex").asText());
+    }
+
+    if (body.has("weight")){
+      u.setWeight(body.get("weight").asInt());
+    }
+
+    u.save();
+
+    return ok(u.toJson());
+  }
+
   /**
    * Logs in the user if the user exists.
    * @return AuthID of the session.
