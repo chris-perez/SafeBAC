@@ -91,6 +91,7 @@ public class User extends Model{
   //catalog of drinks must have percentage of alcohol
   //ounces changeable by person (pint, small glass, next to amounts)
   //alcConsumed = percentage * total ounces drank -> alcohol ounces drank
+  //user.getweight
   public static int calculateBAC(double weight, String id, String sex, double alcConsumed, double hoursPassed) { // Changed void to int
     double sexRatio;
     if(sex.equals("female")) {
