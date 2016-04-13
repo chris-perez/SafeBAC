@@ -12,7 +12,7 @@ import play.mvc.Result;
  * Created by Noah on 4/6/16.
  */
 public class Drinks extends Controller {
-    
+
     public static Result addDrink()
     {
         String name="Svedka";
