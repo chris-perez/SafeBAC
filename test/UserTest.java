@@ -52,7 +52,7 @@ public class UserTest {
     running(fakeApplication(), new Runnable() {
       @Override
       public void run() {
-        User u = User.fromAuthID("email");
+        User u = User.fromAuthID("userID");
         assertThat(u).isNull();
       }
     });
