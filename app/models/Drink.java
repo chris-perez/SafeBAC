@@ -19,7 +19,7 @@ public class Drink extends Model {
 
   public static Finder<Long, Drink> find = new Finder<>(Long.class, Drink.class);
 
-  private Drink(String name, double abv) {
+  public Drink(String name, double abv) {
     this.name = name;
     this.abv = abv;
     this.save();
