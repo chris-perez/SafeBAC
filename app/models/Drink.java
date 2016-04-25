@@ -36,4 +36,8 @@ public class Drink extends Model {
   public static Drink findByID(Long id) {
     return find.byId(id);
   }
+
+  public static Drink findByName(String name) {
+    return find.where().eq("name", name).findUnique();
+  }
 }

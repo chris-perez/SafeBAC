@@ -2,11 +2,19 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.io.Files;
 import models.Drink;
 import models.User;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -36,5 +44,26 @@ public class Drinks extends Controller {
 
         //TODO: return current BAC
         return ok(u.toJson());
+    }
+
+    public static void importDrinks() {
+        try {
+            File file = new File("./data/regions/"+ u.getRegion().name.toLowerCase()+".json");
+            String fileAsString = Files.toString(file, Charset.defaultCharset());
+            JsonNode drinksNode = Json.parse(fileAsString);
+
+            List<JsonNode> stations = new ArrayList<>();
+            Iterator<JsonNode> drinksIterator = drinksNode.elements();
+            while (drinksIterator.hasNext()) {
+                JsonNode d = drinksIterator.next();
+                ObjectNode station = Json.newObject();
+                station.put("name", d.get("name").asText());
+                station.set("stations", parseStations(s.get("stations")));
+                stations.add(station);
+            }
+            return ok(Json.toJson(stations));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
