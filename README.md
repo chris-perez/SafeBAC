@@ -17,3 +17,6 @@ Play Framework server for alcohol consumption management app.
   - import project from existing model
   - sbt
   - select the folder where the project is cloned
+
+##Sample Instance
+ec2-52-34-240-224.us-west-2.compute.amazonaws.com:9000
