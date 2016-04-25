@@ -24,7 +24,7 @@ public class Drink extends Model {
     this.abv = abv;
     this.save();
   }
-  
+
   public ObjectNode toJson() {
     ObjectNode node = Json.newObject();
     node.put("id", id);

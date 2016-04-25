@@ -1,6 +1,8 @@
 import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.User;
+import org.junit.Assert;
 import org.junit.Test;
 import play.Logger;
 import play.libs.Json;
@@ -28,6 +30,25 @@ public class UsersTest {
   String CHANGE_SEX = "male";
   int CHANGE_WEIGHT = 200;
   int CHANGE_AGE = 21;
+
+  @Test
+  public void testBAC() {
+    running(fakeApplication(), new Runnable() {
+
+      private void checkBAC(){
+        Assert.assertEquals(9,User.calculateBAC(115,"id","female",2,3));
+        Assert.assertEquals(9,User.calculateBAC(205,"id","male",4.68,4.25));
+        Assert.assertEquals(10,User.calculateBAC(170,"id","male",4.2,4.5));
+        Assert.assertEquals(20,User.calculateBAC(130,"id","female",4,2));
+        Assert.assertEquals(19,User.calculateBAC(130,"id","female",4,3));
+      }
+
+      @Override
+      public void run() {
+        checkBAC();
+      }
+    });
+  }
 
   @Test
   public void userTest() {
