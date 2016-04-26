@@ -15,7 +15,7 @@ public class DrinkTest {
     running(fakeApplication(), new Runnable() {
       @Override
       public void run() {
-        Drink d = new Drink("name1", .5);
+        Drink d = new Drink("name1", .5, "beer");
         Drink found = Drink.findByName("name1");
         assertThat(found).isNotNull();
       }

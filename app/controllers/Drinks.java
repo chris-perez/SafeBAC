@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.Files;
 import models.Drink;
 import models.User;
+import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -48,20 +49,18 @@ public class Drinks extends Controller {
 
     public static void importDrinks() {
         try {
-            File file = new File("./data/regions/"+ u.getRegion().name.toLowerCase()+".json");
+            File file = new File("./app/assets/alcoholCatalog.json");
             String fileAsString = Files.toString(file, Charset.defaultCharset());
             JsonNode drinksNode = Json.parse(fileAsString);
 
-            List<JsonNode> stations = new ArrayList<>();
-            Iterator<JsonNode> drinksIterator = drinksNode.elements();
+            Iterator<JsonNode> drinksIterator = drinksNode.get("drinkTypes").elements();
             while (drinksIterator.hasNext()) {
-                JsonNode d = drinksIterator.next();
-                ObjectNode station = Json.newObject();
-                station.put("name", d.get("name").asText());
-                station.set("stations", parseStations(s.get("stations")));
-                stations.add(station);
+              JsonNode d = drinksIterator.next();
+              String name =  d.get("name").asText();
+              Double abv = d.get("abv").asDouble();
+              String type = d.get("type").asText();
+              new Drink(name, abv, type);
             }
-            return ok(Json.toJson(stations));
         } catch (IOException e) {
             e.printStackTrace();
         }

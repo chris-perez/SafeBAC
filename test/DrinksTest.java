@@ -13,6 +13,7 @@ import java.util.Iterator;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.fakeApplication;
+import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
 /**
@@ -21,17 +22,17 @@ import static play.test.Helpers.running;
 public class DrinksTest {
   @Test
   public void importDrinks() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         try {
           Drinks.importDrinks();
 
-          File file = new File("./data/regions/" + u.getRegion().name.toLowerCase() + ".json");
+          File file = new File("./app/assets/alcoholCatalog.json");
           String fileAsString = Files.toString(file, Charset.defaultCharset());
           JsonNode drinksNode = Json.parse(fileAsString);
 
-          Iterator<JsonNode> drinksIterator = drinksNode.elements();
+          Iterator<JsonNode> drinksIterator = drinksNode.get("drinkTypes").elements();
           while (drinksIterator.hasNext()) {
             JsonNode d = drinksIterator.next();
             Drink drink = Drink.find.where().eq("name", d.get("name").asText())
@@ -43,7 +44,7 @@ public class DrinksTest {
 
         }catch (IOException e) {
           e.printStackTrace();
-          assertThat(false);
+          assertThat(false).isTrue();
         }
       }
     });

@@ -140,7 +140,7 @@
     {"name":"Miller High Life", "abv":".055", "type":"beer"},
     {"name":"Miller Lite", "abv":".042", "type":"beer"},
     {"name":"Moosehead", "abv":".05", "type":"beer"},
-    {"name":"Murphys Irish Red", "abv":".05"},
+    {"name":"Murphys Irish Red", "abv":".05", "type": "beer"},
     {"name":"Murphys Stout", "abv":".04", "type":"beer"},
     {"name":"ODouls", "abv":".04", "type":"beer"},
     {"name":"ODouls Amber", "abv":".04", "type":"beer"},

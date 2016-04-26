@@ -16,12 +16,14 @@ public class Drink extends Model {
   Long id;
   String name;
   Double abv; //alcohol by volume
+  String type;
 
   public static Finder<Long, Drink> find = new Finder<>(Long.class, Drink.class);
 
-  public Drink(String name, double abv) {
+  public Drink(String name, double abv, String type) {
     this.name = name;
     this.abv = abv;
+    this.type = type;
     this.save();
   }
 
