@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.fakeApplication;
+import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
 /**
@@ -12,7 +13,7 @@ import static play.test.Helpers.running;
 public class DrinkTest {
   @Test
   public void findByName() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         Drink d = new Drink("name1", .5, "beer");

@@ -25,6 +25,10 @@ public class DrinksTest {
     running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
+        for (Drink d : Drink.find.all()) {
+          d.delete();
+        }
+
         try {
           Drinks.importDrinks();
 

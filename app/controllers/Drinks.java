@@ -59,7 +59,11 @@ public class Drinks extends Controller {
               String name =  d.get("name").asText();
               Double abv = d.get("abv").asDouble();
               String type = d.get("type").asText();
-              new Drink(name, abv, type);
+
+              boolean exists = Drink.find.where().eq("name", name).eq("abv", abv).eq("type", type).findRowCount() > 0;
+
+              if (!exists)
+                new Drink(name, abv, type);
             }
         } catch (IOException e) {
             e.printStackTrace();
