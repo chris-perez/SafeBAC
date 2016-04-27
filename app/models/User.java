@@ -7,6 +7,8 @@ import play.libs.Json;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,10 +26,25 @@ public class User extends Model{
   Integer weight;
   String authID;
 
-  List<UserToDrink> userToDrinks;
-  List<UserToUser> userToUsers;
+  @OneToMany(mappedBy = "user")
+  List<UserToDrink> userToDrinks = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user1")
+  List<UserToUser> userToUsers = new ArrayList<>();
 
   public static Finder<Long, User> find = new Finder<>(Long.class, User.class);
+
+  public User(String name, String email, String password, String sex, DateTime birthDate, int weight, String authID) {
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.sex = sex;
+    this.birthDate = birthDate;
+    this.weight = weight;
+    this.authID = authID;
+
+    this.save();
+  }
 
   public void addDrink(Drink drink, Double volume) {
     UserToDrink u2d = new UserToDrink(this, drink, volume, DateTime.now());
@@ -104,19 +121,6 @@ public class User extends Model{
     System.out.println("You have "+ bacPercentage+"% BAC");
     return bacPercentage; // Added return
   }
-
-
-  public User(String name, String email, String password, String sex, DateTime birthDate, int weight, String authID) {
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.sex = sex;
-    this.birthDate = birthDate;
-    this.weight = weight;
-    this.authID = authID;
-    this.save();
-  }
-
 
   public String getName() {
     return name;

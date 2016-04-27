@@ -32,6 +32,7 @@ public class Drink extends Model {
     node.put("id", id);
     node.put("name", name);
     node.put("abv", abv);
+    node.put("type", type);
     return node;
   }
 

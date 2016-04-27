@@ -22,51 +22,74 @@ import java.util.List;
  * Created by Noah on 4/6/16.
  */
 public class Drinks extends Controller {
-    public static final ObjectNode NO_SESSION = Json.newObject().put("error", "There is no current session using that key");
-    public static final ObjectNode INCORRECT_FIELDS = Json.newObject().put("error", "Incorrect fields.");
-    
-    public static Result addDrink()
-    {
-        response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        User u = Users.fromRequest();
-        if (u == null) {
-            return badRequest(NO_SESSION);
-        }
-        JsonNode body = request().body().asJson();
-        Long drinkID = body.get("id").asLong();
-        Double volume = body.get("volume").asDouble();
-        Drink d = Drink.findByID(drinkID);
+  public static final ObjectNode NO_SESSION = Json.newObject().put("error", "There is no current session using that key");
+  public static final ObjectNode INCORRECT_FIELDS = Json.newObject().put("error", "Incorrect fields.");
 
-        if (d == null) {
-            return badRequest(INCORRECT_FIELDS);
-        }
+  /**
+   * Adds a drink to a users drink history.
+   *
+   * @return current BAC
+   */
+  public static Result addDrink() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return badRequest(NO_SESSION);
+    }
+    JsonNode body = request().body().asJson();
+    Long drinkID = body.get("id").asLong();
+    Double volume = body.get("volume").asDouble();
+    Drink d = Drink.findByID(drinkID);
 
-        u.addDrink(d, volume);
-
-        //TODO: return current BAC
-        return ok(u.toJson());
+    if (d == null) {
+      return badRequest(INCORRECT_FIELDS);
     }
 
-    public static void importDrinks() {
-        try {
-            File file = new File("./app/assets/alcoholCatalog.json");
-            String fileAsString = Files.toString(file, Charset.defaultCharset());
-            JsonNode drinksNode = Json.parse(fileAsString);
+    u.addDrink(d, volume);
 
-            Iterator<JsonNode> drinksIterator = drinksNode.get("drinkTypes").elements();
-            while (drinksIterator.hasNext()) {
-              JsonNode d = drinksIterator.next();
-              String name =  d.get("name").asText();
-              Double abv = d.get("abv").asDouble();
-              String type = d.get("type").asText();
+    //TODO: return current BAC
+    return ok(u.toJson());
+  }
 
-              boolean exists = Drink.find.where().eq("name", name).eq("abv", abv).eq("type", type).findRowCount() > 0;
-
-              if (!exists)
-                new Drink(name, abv, type);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+  /**
+   * Gets a list of all drinks in the database.
+   *
+   * @return list of all drinks as Json
+   */
+  public static Result getCatalog() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    ArrayList<ObjectNode> drinksJson = new ArrayList<>();
+    for (Drink d : Drink.find.all()) {
+      drinksJson.add(d.toJson());
     }
+
+    return ok(Json.toJson(drinksJson));
+  }
+
+  /**
+   * Adds drinks to the database from the drinks json file.
+   */
+  public static void importDrinks() {
+    try {
+      File file = new File("./app/assets/alcoholCatalog.json");
+      String fileAsString = Files.toString(file, Charset.defaultCharset());
+      JsonNode drinksNode = Json.parse(fileAsString);
+
+      Iterator<JsonNode> drinksIterator = drinksNode.get("drinkTypes").elements();
+      while (drinksIterator.hasNext()) {
+        JsonNode d = drinksIterator.next();
+        String name = d.get("name").asText();
+        Double abv = d.get("abv").asDouble();
+        String type = d.get("type").asText();
+
+        boolean exists = Drink.find.where().eq("name", name).eq("abv", abv).eq("type", type).findRowCount() > 0;
+
+        if (!exists)
+          new Drink(name, abv, type);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
 }
