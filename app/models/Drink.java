@@ -16,24 +16,31 @@ public class Drink extends Model {
   Long id;
   String name;
   Double abv; //alcohol by volume
+  String type;
 
   public static Finder<Long, Drink> find = new Finder<>(Long.class, Drink.class);
 
-  private Drink(String name, double abv) {
+  public Drink(String name, double abv, String type) {
     this.name = name;
     this.abv = abv;
+    this.type = type;
     this.save();
   }
-  
+
   public ObjectNode toJson() {
     ObjectNode node = Json.newObject();
     node.put("id", id);
     node.put("name", name);
     node.put("abv", abv);
+    node.put("type", type);
     return node;
   }
 
   public static Drink findByID(Long id) {
     return find.byId(id);
+  }
+
+  public static Drink findByName(String name) {
+    return find.where().eq("name", name).findUnique();
   }
 }

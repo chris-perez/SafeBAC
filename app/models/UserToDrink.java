@@ -5,6 +5,8 @@ import play.db.ebean.Model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * Created by Chris on 3/27/2016.
@@ -13,6 +15,7 @@ import javax.persistence.Id;
 public class UserToDrink extends Model {
   @Id
   Long id;
+  @ManyToOne
   User user;
   Drink drink;
   Double volume;

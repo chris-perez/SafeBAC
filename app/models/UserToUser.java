@@ -2,8 +2,7 @@ package models;
 
 import play.db.ebean.Model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by Chris on 3/27/2016.
@@ -12,6 +11,7 @@ import javax.persistence.Id;
 public class UserToUser extends Model {
   @Id
   Long id;
+  @ManyToOne
   User user1;
   User user2;
   Boolean user1IsVisible = false;

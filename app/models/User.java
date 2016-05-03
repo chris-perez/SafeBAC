@@ -7,6 +7,8 @@ import play.libs.Json;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,10 +26,25 @@ public class User extends Model{
   Integer weight;
   String authID;
 
-  List<UserToDrink> userToDrinks;
-  List<UserToUser> userToUsers;
+  @OneToMany(mappedBy = "user")
+  List<UserToDrink> userToDrinks = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user1")
+  List<UserToUser> userToUsers = new ArrayList<>();
 
   public static Finder<Long, User> find = new Finder<>(Long.class, User.class);
+
+  public User(String name, String email, String password, String sex, DateTime birthDate, int weight, String authID) {
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.sex = sex;
+    this.birthDate = birthDate;
+    this.weight = weight;
+    this.authID = authID;
+
+    this.save();
+  }
 
   public void addDrink(Drink drink, Double volume) {
     UserToDrink u2d = new UserToDrink(this, drink, volume, DateTime.now());
@@ -85,18 +102,25 @@ public class User extends Model{
     node.put("weight", weight);
     return node;
   }
-
-  public User(String name, String email, String password, String sex, DateTime birthDate, int weight, String authID) {
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.sex = sex;
-    this.birthDate = birthDate;
-    this.weight = weight;
-    this.authID = authID;
-    this.save();
+  //must write update hours and update alcohol ounces consumed function -> how fast does alcohol filter out of system
+  //^whenever in app or whenever new drink?
+  //is graph of BAC over time or oz's of alcohol? Second easier
+  //catalog of drinks must have percentage of alcohol
+  //ounces changeable by person (pint, small glass, next to amounts)
+  //alcConsumed = percentage * total ounces drank -> alcohol ounces drank
+  //user.getweight
+  public static int calculateBAC(double weight, String id, String sex, double alcConsumed, double hoursPassed) { // Changed void to int
+    double sexRatio;
+    if(sex.equals("female")) {
+      sexRatio = .66;
+    }else{
+      sexRatio = .73;
+    }
+    double bac = ((alcConsumed * 5.14)/(weight * sexRatio)) - (.015 * hoursPassed);//alcohol burns off at about .015 an hour
+    int bacPercentage = (int)(bac*100);
+    System.out.println("You have "+ bacPercentage+"% BAC");
+    return bacPercentage; // Added return
   }
-
 
   public String getName() {
     return name;

@@ -14,5 +14,6 @@ DELETE      /user/auth           controllers.Users.logoutUser()
 
 PUT         /user/profile        controllers.Users.updateProfile()
 
-PUT         /drink               controllers.Drinks.addDrink()
+GET         /drinks              controllers.Drinks.getCatalog()
+PUT         /drinks              controllers.Drinks.addDrink()
     

@@ -64,7 +64,7 @@ public class UserTest {
       @Override
       public void run() {
         User u = new User("name", "email", "password", "male", new DateTime(), 160, "authID");
-        Drink d = new Drink("name", .07);
+        Drink d = new Drink("name", .07, "beer");
         UserToDrink u2d = new UserToDrink(u, d, .5, new DateTime());
         UserToDrink u2d2 = UserToDrink.find.byId(u2d.getId());
         assertThat(u2d2).isNotNull();
