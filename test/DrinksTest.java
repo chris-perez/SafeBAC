@@ -41,7 +41,7 @@ public class DrinksTest {
         try {
           Drinks.importDrinks();
 
-          File file = new File("./app/assets/alcoholCatalog.json");
+          File file = new File("app/assets/alcoholCatalog.json");
           String fileAsString = Files.toString(file, Charset.defaultCharset());
           JsonNode drinksNode = Json.parse(fileAsString);
 
