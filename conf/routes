@@ -3,9 +3,17 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET         /                    controllers.Application.index()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
+POST        /user/auth           controllers.Users.createUser()
+PUT         /user/auth           controllers.Users.loginUser()
+DELETE      /user/auth           controllers.Users.logoutUser()
+
+PUT         /user/profile        controllers.Users.updateProfile()
+
+GET         /drinks              controllers.Drinks.getCatalog()
+PUT         /drinks              controllers.Drinks.addDrink()
     

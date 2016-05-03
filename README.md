@@ -56,3 +56,6 @@ git push
   - import project from existing model
   - sbt
   - select the folder where the project is cloned
+
+##Sample Instance
+http://ec2-52-34-240-224.us-west-2.compute.amazonaws.com:9000
