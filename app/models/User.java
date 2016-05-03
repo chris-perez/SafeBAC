@@ -1,6 +1,7 @@
 package models;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.h2.mvstore.cache.CacheLongKeyLIRS;
 import org.joda.time.DateTime;
 import play.db.ebean.Model;
 import play.libs.Json;
@@ -176,5 +177,28 @@ public class User extends Model{
 
   public void setAuthID(String authID) {
     this.authID = authID;
+  }
+
+  /**
+   * Adds a user as a friend to userToUsers
+   * @param friend user to be added as friend
+   */
+  public void addFriend(User friend) {
+    if (UserToUser.exists(this, friend))
+      return;
+
+    UserToUser u2u = new UserToUser(this, friend);
+  }
+
+  /**
+   * Gets a list of Users that are added as friends
+   * @return
+   */
+  public List<User> getFriends() {
+    List<User> friends = new ArrayList<>();
+    for (UserToUser u2u: userToUsers) {
+      friends.add(u2u.user2);
+    }
+    return friends;
   }
 }

@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.test.Helpers.fakeApplication;
+import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
 /**
@@ -15,8 +16,22 @@ import static play.test.Helpers.running;
 public class UserTest {
 
   @Test
+  public void addFriend() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, "authID1");
+        User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
+        user1.addFriend(user2);
+        assertThat(user1.getFriends().get(0)).isEqualTo(user2);
+//        assertThat(user2.getFriends().get(0)).isEqualTo(user1);
+      }
+    });
+  }
+
+  @Test
   public void userExists() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         boolean exists = User.userExists("email");
@@ -27,7 +42,7 @@ public class UserTest {
 
   @Test
   public void fromEmail() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         User u = User.fromEmail("email");
@@ -38,7 +53,7 @@ public class UserTest {
 
   @Test
   public void idExists() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         boolean exists = User.idExists("userID");
@@ -49,7 +64,7 @@ public class UserTest {
 
   @Test
   public void fromAuthID() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         User u = User.fromAuthID("userID");
@@ -60,7 +75,7 @@ public class UserTest {
 
   @Test
   public void userToDrinkConstructor() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         User u = new User("name", "email", "password", "male", new DateTime(), 160, "authID");
@@ -77,7 +92,7 @@ public class UserTest {
 
   @Test
   public void userToUserConstructor() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         User u = new User("name", "email", "password", "male", new DateTime(), 160, "authID");
