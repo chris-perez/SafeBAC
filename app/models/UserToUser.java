@@ -32,12 +32,21 @@ public class UserToUser extends Model {
     return id;
   }
 
+  public User getUser1() {
+    return user1;
+  }
+
+  public User getUser2() {
+    return user2;
+  }
+
   public Boolean getUser1IsVisible() {
     return user1IsVisible;
   }
 
   public void setUser1IsVisible(Boolean user1IsVisible) {
     this.user1IsVisible = user1IsVisible;
+    this.save();
   }
 
   public Boolean getUser2IsVisible() {
@@ -46,6 +55,7 @@ public class UserToUser extends Model {
 
   public void setUser2IsVisible(Boolean user2IsVisible) {
     this.user2IsVisible = user2IsVisible;
+    this.save();
   }
 
   /**

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.Users;
 import models.Drink;
 import models.User;
+import models.UserToUser;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -142,10 +143,27 @@ public class UsersTest {
         User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, TEST_AUTH_TOKEN);
         User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
 
-        request = Json.newObject();
-
-        // Logout
         result = callAction(controllers.routes.ref.Users.addFriend(user2.getID()),
+            fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
+        assertThat(status(result)).isEqualTo(NO_CONTENT);
+      }
+    });
+  }
+
+  @Test
+  public void setBACVisibleToFriend() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, TEST_AUTH_TOKEN);
+        User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
+
+        result = callAction(controllers.routes.ref.Users.setBACVisibleToFriend(user2.getID(), true),
+            fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
+        assertThat(status(result)).isEqualTo(BAD_REQUEST);
+
+        new UserToUser(user1, user2);
+        result = callAction(controllers.routes.ref.Users.setBACVisibleToFriend(user2.getID(), true),
             fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
         assertThat(status(result)).isEqualTo(NO_CONTENT);
       }

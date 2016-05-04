@@ -32,6 +32,24 @@ public class UserTest {
   }
 
   @Test
+  public void setBACVisibleToFriend() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, "authID1");
+        User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
+        User user3 = new User("name3", "email3", "password3", "female", DateTime.now(), 140, "authID3");
+        user3.addFriend(user1);
+        user1.addFriend(user2);
+        user1.setBACVisibleToFriend(user2, true);
+        assertThat(UserToUser.findByUsers(user1, user2).getUser1IsVisible()).isTrue();
+        assertThat(UserToUser.findByUsers(user1, user3).getUser1IsVisible()).isFalse();
+      }
+    });
+  }
+
+
+  @Test
   public void userExists() {
     running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override

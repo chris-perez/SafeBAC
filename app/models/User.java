@@ -141,13 +141,27 @@ public class User extends Model{
   public List<User> getFriends() {
     List<User> friends = new ArrayList<>();
     for (UserToUser u2u: UserToUser.findByUser(this)) {
-      if (u2u.user1.equals(this)) {
-        friends.add(u2u.user2);
+      if (u2u.getUser1().equals(this)) {
+        friends.add(u2u.getUser2());
       } else {
-        friends.add(u2u.user1);
+        friends.add(u2u.getUser1());
       }
     }
     return friends;
+  }
+
+  /**
+   * Sets if user is visible to friend;
+   * @param friend friend to set visibility for
+   * @param visible whether or not the user's BAC should be visible to friend
+   */
+  public void setBACVisibleToFriend(User friend, boolean visible) {
+    UserToUser u2u = UserToUser.findByUsers(this, friend);
+    if (this.equals(u2u.getUser1())) {
+      u2u.setUser1IsVisible(visible);
+    } else {
+      u2u.setUser2IsVisible(visible);
+    }
   }
 
   public String getName() {

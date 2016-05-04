@@ -171,6 +171,32 @@ public class Users extends Controller {
   }
 
   /**
+   * Sets a users BAC visibility for the given friend
+   * @param friendID id of friend
+   * @param visible whether or not the user's BAC should be visible to friend
+   * @return no content
+   */
+  public static Result setBACVisibleToFriend(Long friendID, Boolean visible) {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return unauthorized(NO_SESSION);
+    }
+
+    User friend = User.find.byId(friendID);
+    if (friend == null) {
+      return badRequest(INCORRECT_FIELDS);
+    }
+    try {
+      u.setBACVisibleToFriend(friend, visible);
+    } catch (NullPointerException e) {
+      return badRequest(INCORRECT_FIELDS);
+    }
+
+    return noContent();
+  }
+
+  /**
    * Logs out the user.
    * @return 200
    */
