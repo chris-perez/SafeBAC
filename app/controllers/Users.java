@@ -115,28 +115,6 @@ public class Users extends Controller {
     return ok(u.toJson());
   }
 
-  public static Result getDrinkHistory() {
-    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-    User u = Users.fromRequest();
-    if (u == null) {
-      return unauthorized(NO_SESSION);
-    }
-    List<JsonNode> history = new ArrayList<>();
-    for (UserToDrink u2d : u.getDrinkHistory()) {
-      ObjectNode node = Json.newObject();
-      Drink d = u2d.getDrink();
-      node.put("id", u2d.getId());
-      node.put("name", d.getName());
-      node.put("abv", d.getAbv());
-      node.put("type", d.getType());
-      node.put("volume", u2d.getVolume());
-      node.put("time", u2d.getTime().getMillis());
-      history.add(node);
-    }
-
-    return ok(Json.toJson(history));
-  }
-
   /**
    * Logs in the user if the user exists.
    * @return AuthID of the session.

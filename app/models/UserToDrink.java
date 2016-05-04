@@ -17,6 +17,7 @@ public class UserToDrink extends Model {
   Long id;
   @ManyToOne
   User user;
+  @ManyToOne
   Drink drink;
   Double volume;
   DateTime time;
