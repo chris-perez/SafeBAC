@@ -34,4 +34,16 @@ public class UserToDrink extends Model {
   public Long getId() {
     return id;
   }
+
+  public Drink getDrink() {
+    return drink;
+  }
+
+  public Double getVolume() {
+    return volume;
+  }
+
+  public DateTime getTime() {
+    return time;
+  }
 }
