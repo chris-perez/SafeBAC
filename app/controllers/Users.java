@@ -3,6 +3,7 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.User;
+import models.UserToUser;
 import org.joda.time.DateTime;
 import play.Logger;
 import play.api.libs.Codecs;
@@ -11,6 +12,9 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import plugins.MersenneGeneratorPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chris_000 on 3/22/2016.
@@ -168,6 +172,43 @@ public class Users extends Controller {
     User friend = User.find.byId(id);
     u.addFriend(friend);
     return noContent();
+  }
+
+  /**
+   * Gets a list of the users friends as json.
+   * @return friends as json
+   */
+  public static Result getFriends() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return unauthorized(NO_SESSION);
+    }
+
+    List<JsonNode> friendsJson = new ArrayList<>();
+    for (User friend : u.getFriends()) {
+      ObjectNode node = friend.toFriendJson();
+      UserToUser u2u = UserToUser.findByUsers(u, friend);
+      //Add friends BAC if it is visible to user
+      if (friend.equals(u2u.getUser2()) && u2u.getUser2IsVisible()) {
+        node.put("bac", friend.getBAC());
+      } else if (friend.equals(u2u.getUser1()) && u2u.getUser1IsVisible()) {
+        node.put("bac", friend.getBAC());
+      }
+
+      //Add if user is visible to friend
+      if (u.equals(u2u.getUser2()) && u2u.getUser2IsVisible()) {
+        node.put("visible", true);
+      } else if (u.equals(u2u.getUser1()) && u2u.getUser1IsVisible()) {
+        node.put("visible", true);
+      } else {
+        node.put("visible", false);
+      }
+
+      friendsJson.add(node);
+    }
+
+    return ok(Json.toJson(friendsJson));
   }
 
   /**

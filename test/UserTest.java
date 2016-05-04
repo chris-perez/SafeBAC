@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.databind.JsonNode;
 import models.Drink;
 import models.User;
 import models.UserToDrink;
@@ -14,6 +15,37 @@ import static play.test.Helpers.running;
  * Created by chris_000 on 3/25/2016.
  */
 public class UserTest {
+
+  @Test
+  public void toJson() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, "authID1");
+        JsonNode json = user1.toJson();
+        assertThat(json.get("id").asLong()).isEqualTo(user1.getID());
+        assertThat(json.get("name").asText()).isEqualTo(user1.getName());
+        assertThat(json.get("email").asText()).isEqualTo(user1.getEmail());
+        assertThat(json.get("sex").asText()).isEqualTo(user1.getSex());
+        assertThat(json.get("birthDate").asLong()).isEqualTo(user1.getBirthDate().getMillis());
+        assertThat(json.get("weight").asInt()).isEqualTo(user1.getWeight());
+        assertThat(json.get("bac").asDouble()).isEqualTo(user1.getBAC());
+      }
+    });
+  }
+
+  @Test
+  public void friendToJson() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, "authID1");
+        JsonNode json = user1.toFriendJson();
+        assertThat(json.get("id").asLong()).isEqualTo(user1.getID());
+        assertThat(json.get("name").asText()).isEqualTo(user1.getName());
+      }
+    });
+  }
 
   @Test
   public void addFriend() {

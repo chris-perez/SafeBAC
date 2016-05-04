@@ -13,6 +13,8 @@ import play.api.libs.Crypto;
 import play.libs.Json;
 import play.mvc.Result;
 
+import java.util.Iterator;
+
 import static org.fest.assertions.Assertions.assertThat;
 import static play.mvc.Http.Status.OK;
 import static play.test.Helpers.*;
@@ -166,6 +168,37 @@ public class UsersTest {
         result = callAction(controllers.routes.ref.Users.setBACVisibleToFriend(user2.getID(), true),
             fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
         assertThat(status(result)).isEqualTo(NO_CONTENT);
+      }
+    });
+  }
+
+  @Test
+  public void getFriends() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, TEST_AUTH_TOKEN);
+        User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
+        User user3 = new User("name3", "email3", "password3", "female", DateTime.now(), 140, "authID3");
+        new UserToUser(user1, user2);
+        new UserToUser(user1, user3);
+        user2.setBACVisibleToFriend(user1, true);
+        result = callAction(controllers.routes.ref.Users.getFriends(),
+            fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
+        assertThat(status(result)).isEqualTo(OK);
+
+        content = Json.parse(contentAsString(result));
+        assertThat(content.isArray()).isTrue();
+        Iterator<JsonNode> friendIterator = content.elements();
+        while (friendIterator.hasNext()) {
+          JsonNode node = friendIterator.next();
+          assertThat(node.has("id")).isTrue();
+          assertThat(node.has("name")).isTrue();
+          assertThat(node.has("visible")).isTrue();
+          if (node.get("id").asLong() == user2.getID()) {
+            assertThat(node.has("bac")).isTrue();
+          }
+        }
       }
     });
   }

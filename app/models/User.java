@@ -1,5 +1,6 @@
 package models;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.h2.mvstore.cache.CacheLongKeyLIRS;
 import org.joda.time.DateTime;
@@ -99,10 +100,30 @@ public class User extends Model{
     node.put("name", name);
     node.put("email", email);
     node.put("sex", sex);
-    node.put("birthDate", birthDate.toString());
+    node.put("birthDate", birthDate.getMillis());
     node.put("weight", weight);
+    node.put("bac", getBAC());
     return node;
   }
+
+  /**
+   * @return Json ObjectNode that contains necessary info about the user that can be seen by friends
+   */
+  public ObjectNode toFriendJson() {
+    ObjectNode node = Json.newObject();
+    node.put("id", id);
+    node.put("name", name);
+    return node;
+  }
+
+  /**
+   * @return current BAC of the user
+   */
+  public double getBAC() {
+    //TODO: Swap with real BAC
+    return .08;
+  }
+
   //must write update hours and update alcohol ounces consumed function -> how fast does alcohol filter out of system
   //^whenever in app or whenever new drink?
   //is graph of BAC over time or oz's of alcohol? Second easier
