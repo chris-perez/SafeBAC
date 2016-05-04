@@ -135,6 +135,24 @@ public class UsersTest {
   }
 
   @Test
+  public void addFriend() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, TEST_AUTH_TOKEN);
+        User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
+
+        request = Json.newObject();
+
+        // Logout
+        result = callAction(controllers.routes.ref.Users.addFriend(user2.getID()),
+            fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
+        assertThat(status(result)).isEqualTo(NO_CONTENT);
+      }
+    });
+  }
+
+  @Test
   public void logoutUser() {
     running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override

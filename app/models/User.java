@@ -123,6 +123,33 @@ public class User extends Model{
     return bacPercentage; // Added return
   }
 
+  /**
+   * Adds a user as a friend to userToUsers
+   * @param friend user to be added as friend
+   */
+  public void addFriend(User friend) {
+    if (UserToUser.exists(this, friend))
+      return;
+
+    UserToUser u2u = new UserToUser(this, friend);
+  }
+
+  /**
+   * Gets a list of Users that are added as friends
+   * @return
+   */
+  public List<User> getFriends() {
+    List<User> friends = new ArrayList<>();
+    for (UserToUser u2u: UserToUser.findByUser(this)) {
+      if (u2u.user1.equals(this)) {
+        friends.add(u2u.user2);
+      } else {
+        friends.add(u2u.user1);
+      }
+    }
+    return friends;
+  }
+
   public String getName() {
     return name;
   }
@@ -179,26 +206,7 @@ public class User extends Model{
     this.authID = authID;
   }
 
-  /**
-   * Adds a user as a friend to userToUsers
-   * @param friend user to be added as friend
-   */
-  public void addFriend(User friend) {
-    if (UserToUser.exists(this, friend))
-      return;
-
-    UserToUser u2u = new UserToUser(this, friend);
-  }
-
-  /**
-   * Gets a list of Users that are added as friends
-   * @return
-   */
-  public List<User> getFriends() {
-    List<User> friends = new ArrayList<>();
-    for (UserToUser u2u: userToUsers) {
-      friends.add(u2u.user2);
-    }
-    return friends;
+  public Long getID() {
+    return id;
   }
 }

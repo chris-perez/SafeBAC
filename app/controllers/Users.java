@@ -70,6 +70,10 @@ public class Users extends Controller {
     return ok(json);
   }
 
+  /**
+   * Updates a users basic information
+   * @return user info as json
+   */
   public static Result updateProfile() {
     response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
     JsonNode body = request().body().asJson();
@@ -147,6 +151,23 @@ public class Users extends Controller {
     ObjectNode json = u.toJson();
     json.put("authID", u.getAuthID());
     return ok(json);
+  }
+
+  /**
+   * Adds a friend by user id
+   * @param id id of the friend to be added
+   * @return no content
+   */
+  public static Result addFriend(Long id) {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return unauthorized(NO_SESSION);
+    }
+
+    User friend = User.find.byId(id);
+    u.addFriend(friend);
+    return noContent();
   }
 
   /**

@@ -22,9 +22,11 @@ public class UserTest {
       public void run() {
         User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, "authID1");
         User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
+        User user3 = new User("name3", "email3", "password3", "female", DateTime.now(), 140, "authID3");
+        user3.addFriend(user1);
         user1.addFriend(user2);
-        assertThat(user1.getFriends().get(0)).isEqualTo(user2);
-//        assertThat(user2.getFriends().get(0)).isEqualTo(user1);
+        assertThat(user1.getFriends().contains(user2)).isTrue();
+        assertThat(user1.getFriends().contains(user3)).isTrue();
       }
     });
   }

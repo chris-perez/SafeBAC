@@ -15,6 +15,7 @@ public class UserToUser extends Model {
   Long id;
   @ManyToOne
   User user1;
+  @ManyToOne
   User user2;
   Boolean user1IsVisible = false;
   Boolean user2IsVisible = false;
@@ -54,9 +55,16 @@ public class UserToUser extends Model {
    * @return if a UserToUser exists
    */
   public static boolean exists(User user1, User user2) {
-    return true;
-//    return find.where().eq("user1", user1).eq("user2", user2).findRowCount() > 0
-//        || find.where().eq("user1", user2).eq("user2", user1).findRowCount() > 0;
+    return find.where().or(
+        Expr.and(
+            Expr.eq("user1", user1),
+            Expr.eq("user2", user2)
+        ),
+        Expr.and(
+            Expr.eq("user2", user1),
+            Expr.eq("user1", user2)
+        )
+    ).findRowCount() > 0;
   }
 
   /**
