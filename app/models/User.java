@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.h2.mvstore.cache.CacheLongKeyLIRS;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
+import play.Logger;
 import play.db.ebean.Model;
 import play.libs.Json;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,40 +145,45 @@ public class User extends Model{
   //DateTime() timestamp
   //  List<UserToDrink> userToDrinks;
 
-  public int calculateBAC(String id) {
-    if(userToDrinks.isEmpty()) {//if no drinks in list
-      return 0;
+  public double calculateBAC(String id) {
+    if(getDrinksAfter(DateTime.now().minusHours(4)).isEmpty()) {//if no drinks in list
+        return 0;
     }
+      if(idExists(id)==false){
+          return 0;
+      }
 
     DateTime timeNow = DateTime.now();
 
     List<UserToDrink> userHasDrunk = getDrinksAfter(timeNow.minusHours(4));//returns list of drinks that user has drunk in last 4 hours (average filters out in 2 or so, this is safe estimate)
     Minutes timePassed = Minutes.minutesBetween(userHasDrunk.get(0).time,timeNow);//calculates how long user has been drinking within that time
     int minutesPassed =  timePassed.getMinutes();//gets minutes passed in this period
-    double hoursPassed = minutesPassed / 60;//converts to hours
+    double hoursPassed = (double)minutesPassed / 60;//converts to hours
+    System.out.println(hoursPassed);
+    //Logger.info("hoursPassed", hoursPassed);
 
-    if(userHasDrunk.isEmpty()){//if no drinks in past 4 hours
-      return 0;
-    }
 
     double ouncesAlcConsumed = 0;
     int lenList = userHasDrunk.size();
     int x = 0;
+    System.out.println(ouncesAlcConsumed);
     while(x < lenList){
-      ouncesAlcConsumed += userHasDrunk.get(x).volume * userHasDrunk.get(0).drink.abv;
+      ouncesAlcConsumed += userHasDrunk.get(x).getVolume() * userHasDrunk.get(x).drink.getAbv();
       x++;
     }
-
+    System.out.println(ouncesAlcConsumed);
     double sexRatio;
     if(sex.equals("female")) {
       sexRatio = .66;
     }else{
       sexRatio = .73;
     }
+    System.out.println(sexRatio);
+    double bac = (double)(((double)(ouncesAlcConsumed) * 5.14)/((double)(weight) * sexRatio)) - (.015 * (double)(hoursPassed));//alcohol burns off at about .015 an hour
+    bac = (double)Math.round(bac*100)/100;
+    System.out.println(bac);
 
-    double bac = ((ouncesAlcConsumed * 5.14)/(weight * sexRatio)) - (.015 * hoursPassed);//alcohol burns off at about .015 an hour
-    int bacPercentage = (int)(bac*100);
-    return bacPercentage;
+    return bac;
   }
   /**
    * Adds a user as a friend to userToUsers
