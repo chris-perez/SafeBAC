@@ -147,9 +147,9 @@ public class UsersTest {
         User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, TEST_AUTH_TOKEN);
         User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
 
-        result = callAction(controllers.routes.ref.Users.addFriend(user2.getID()),
+        result = callAction(controllers.routes.ref.Users.addFriend(user2.getEmail()),
             fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
-        assertThat(status(result)).isEqualTo(NO_CONTENT);
+        assertThat(status(result)).isEqualTo(OK);
       }
     });
   }

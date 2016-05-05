@@ -15,7 +15,7 @@ DELETE      /user/auth           controllers.Users.logoutUser()
 PUT         /user/profile        controllers.Users.updateProfile()
 
 GET         /user/friends        controllers.Users.getFriends()
-PUT         /user/friends        controllers.Users.addFriend(id: Long)
+PUT         /user/friends        controllers.Users.addFriend(email: String)
 POST        /user/friends        controllers.Users.setBACVisibleToFriend(id: Long, visible: Boolean)
 
 GET         /drinks              controllers.Drinks.getCatalog()
