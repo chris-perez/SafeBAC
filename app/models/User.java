@@ -120,14 +120,6 @@ public class User extends Model{
     return node;
   }
 
-  /**
-   * @return current BAC of the user
-   */
-  public double getBAC() {
-    //TODO: Swap with real BAC
-    return .08;
-  }
-
   public List<UserToDrink> getDrinksAfter(DateTime time) {
     return UserToDrink.find.where().eq("user", this).ge("time", time).orderBy("time desc").findList();
   }
@@ -135,16 +127,12 @@ public class User extends Model{
     /**
      * Calculates user blood alcohol content
      *
-     * @param id of user
      * @return bac as double
      */
-  public double calculateBAC(String id) {
+  public double getBAC() {
     if(getDrinksAfter(DateTime.now().minusHours(4)).isEmpty()) {//if no drinks in list
         return 0;
     }
-      if(idExists(id)==false){
-          return 0;
-      }
 
     DateTime timeNow = DateTime.now();
 
@@ -159,7 +147,6 @@ public class User extends Model{
       ouncesAlcConsumed += userHasDrunk.get(x).getVolume() * userHasDrunk.get(x).drink.getAbv();
       x++;
     }
-    System.out.println(ouncesAlcConsumed);
     double sexRatio;
     if(sex.equals("female")) {
       sexRatio = .66;
