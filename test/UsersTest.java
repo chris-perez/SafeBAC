@@ -43,19 +43,32 @@ public class UsersTest {
   ObjectNode request;
   JsonNode content;
   Result result;
-
   @Test
   public void testBAC() {
-    running(fakeApplication(inMemoryDatabase()), new Runnable() {
 
-      private void checkBAC(){
-        Assert.assertEquals(9,User.calculateBAC(115,"id","female",2,3));
-        Assert.assertEquals(9,User.calculateBAC(205,"id","male",4.68,4.25));
-        Assert.assertEquals(10,User.calculateBAC(170,"id","male",4.2,4.5));
-        Assert.assertEquals(20,User.calculateBAC(130,"id","female",4,2));
-        Assert.assertEquals(19,User.calculateBAC(130,"id","female",4,3));
+    running(fakeApplication(), new Runnable() {
+      //add errors if blank entry or negative weight, etc, if it gets negative input, send back message to what took input, exceptions, border cases (0)
+      private void checkBAC() {//unit testing
+        User testBob = new User("Bob", "b@ob.com", "1234", "male", new DateTime(734799539), 170, "m");//create new User before String name, String email, String password, String sex, DateTime birthDate, int weight, String authI
+        String x = testBob.getAuthID();
+        testBob.setAuthID(x);
+        assertThat(testBob.calculateBAC(x)).isEqualTo(0);//test user with no drinks in db
+
+        UserToDrink u2d = new UserToDrink(testBob, new Drink("beer1", .05,"beer"), 60.0, new DateTime(DateTime.now().minusMinutes(210)));
+        assertThat(testBob.calculateBAC(x)).isEqualTo(.07);//test male with drinks in db
+
+        User testAnne = new User("Anne", "a@nne.com", "5678", "female", new DateTime(734799589), 130, "f");//create new User before String name, String email, String password, String sex, DateTime birthDate, int weight, String authI
+        String y = testAnne.getAuthID();
+        testAnne.setAuthID(y);
+        assertThat(testAnne.calculateBAC(x)).isEqualTo(0);//test second user with no drinks in db
+
+        UserToDrink u2d2 = new UserToDrink(testAnne, new Drink("beer1", .05,"beer"), 60.0, new DateTime(DateTime.now().minusMinutes(210)));
+        assertThat(testAnne.calculateBAC(x)).isEqualTo(.13);//test female with drinks in db
+
+        UserToDrink u2d3 = new UserToDrink(testAnne, new Drink("beer1", .05,"beer"), 60.0, new DateTime(DateTime.now().minusMinutes(210)));
+        assertThat(testAnne.calculateBAC(x)).isEqualTo(.31);//test female with drinks in db
+
       }
-
       @Override
       public void run() {
         checkBAC();
