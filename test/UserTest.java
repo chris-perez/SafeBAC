@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.databind.JsonNode;
 import models.Drink;
 import models.User;
 import models.UserToDrink;
@@ -16,6 +17,71 @@ import static play.test.Helpers.running;
  * Created by chris_000 on 3/25/2016.
  */
 public class UserTest {
+
+  @Test
+  public void toJson() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, "authID1");
+        JsonNode json = user1.toJson();
+        assertThat(json.get("id").asLong()).isEqualTo(user1.getID());
+        assertThat(json.get("name").asText()).isEqualTo(user1.getName());
+        assertThat(json.get("email").asText()).isEqualTo(user1.getEmail());
+        assertThat(json.get("sex").asText()).isEqualTo(user1.getSex());
+        assertThat(json.get("birthDate").asLong()).isEqualTo(user1.getBirthDate().getMillis());
+        assertThat(json.get("weight").asInt()).isEqualTo(user1.getWeight());
+        assertThat(json.get("bac").asDouble()).isEqualTo(user1.getBAC());
+      }
+    });
+  }
+
+  @Test
+  public void friendToJson() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, "authID1");
+        JsonNode json = user1.toFriendJson();
+        assertThat(json.get("id").asLong()).isEqualTo(user1.getID());
+        assertThat(json.get("name").asText()).isEqualTo(user1.getName());
+      }
+    });
+  }
+
+  @Test
+  public void addFriend() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, "authID1");
+        User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
+        User user3 = new User("name3", "email3", "password3", "female", DateTime.now(), 140, "authID3");
+        user3.addFriend(user1);
+        user1.addFriend(user2);
+        assertThat(user1.getFriends().contains(user2)).isTrue();
+        assertThat(user1.getFriends().contains(user3)).isTrue();
+      }
+    });
+  }
+
+  @Test
+  public void setBACVisibleToFriend() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, "authID1");
+        User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
+        User user3 = new User("name3", "email3", "password3", "female", DateTime.now(), 140, "authID3");
+        user3.addFriend(user1);
+        user1.addFriend(user2);
+        user1.setBACVisibleToFriend(user2, true);
+        assertThat(UserToUser.findByUsers(user1, user2).getUser1IsVisible()).isTrue();
+        assertThat(UserToUser.findByUsers(user1, user3).getUser1IsVisible()).isFalse();
+      }
+    });
+  }
+
 
   @Test
   public void getDrinkHistory() {
@@ -37,7 +103,7 @@ public class UserTest {
 
   @Test
   public void userExists() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         boolean exists = User.userExists("email");
@@ -48,7 +114,7 @@ public class UserTest {
 
   @Test
   public void fromEmail() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         User u = User.fromEmail("email");
@@ -59,7 +125,7 @@ public class UserTest {
 
   @Test
   public void idExists() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         boolean exists = User.idExists("userID");
@@ -70,7 +136,7 @@ public class UserTest {
 
   @Test
   public void fromAuthID() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         User u = User.fromAuthID("userID");
@@ -81,7 +147,7 @@ public class UserTest {
 
   @Test
   public void userToUserConstructor() {
-    running(fakeApplication(), new Runnable() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
         User u = new User("name", "email", "password", "male", new DateTime(), 160, "authID");

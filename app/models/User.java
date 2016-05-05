@@ -1,6 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.h2.mvstore.cache.CacheLongKeyLIRS;
 import org.joda.time.DateTime;
 import play.db.ebean.Model;
 import play.libs.Json;
@@ -98,10 +100,30 @@ public class User extends Model{
     node.put("name", name);
     node.put("email", email);
     node.put("sex", sex);
-    node.put("birthDate", birthDate.toString());
+    node.put("birthDate", birthDate.getMillis());
     node.put("weight", weight);
+    node.put("bac", getBAC());
     return node;
   }
+
+  /**
+   * @return Json ObjectNode that contains necessary info about the user that can be seen by friends
+   */
+  public ObjectNode toFriendJson() {
+    ObjectNode node = Json.newObject();
+    node.put("id", id);
+    node.put("name", name);
+    return node;
+  }
+
+  /**
+   * @return current BAC of the user
+   */
+  public double getBAC() {
+    //TODO: Swap with real BAC
+    return .08;
+  }
+
   //must write update hours and update alcohol ounces consumed function -> how fast does alcohol filter out of system
   //^whenever in app or whenever new drink?
   //is graph of BAC over time or oz's of alcohol? Second easier
@@ -120,6 +142,47 @@ public class User extends Model{
     int bacPercentage = (int)(bac*100);
     System.out.println("You have "+ bacPercentage+"% BAC");
     return bacPercentage; // Added return
+  }
+
+  /**
+   * Adds a user as a friend to userToUsers
+   * @param friend user to be added as friend
+   */
+  public void addFriend(User friend) {
+    if (UserToUser.exists(this, friend))
+      return;
+
+    UserToUser u2u = new UserToUser(this, friend);
+  }
+
+  /**
+   * Gets a list of Users that are added as friends
+   * @return
+   */
+  public List<User> getFriends() {
+    List<User> friends = new ArrayList<>();
+    for (UserToUser u2u: UserToUser.findByUser(this)) {
+      if (u2u.getUser1().equals(this)) {
+        friends.add(u2u.getUser2());
+      } else {
+        friends.add(u2u.getUser1());
+      }
+    }
+    return friends;
+  }
+
+  /**
+   * Sets if user is visible to friend;
+   * @param friend friend to set visibility for
+   * @param visible whether or not the user's BAC should be visible to friend
+   */
+  public void setBACVisibleToFriend(User friend, boolean visible) {
+    UserToUser u2u = UserToUser.findByUsers(this, friend);
+    if (this.equals(u2u.getUser1())) {
+      u2u.setUser1IsVisible(visible);
+    } else {
+      u2u.setUser2IsVisible(visible);
+    }
   }
 
   public List<UserToDrink> getDrinkHistory() {
@@ -180,5 +243,9 @@ public class User extends Model{
 
   public void setAuthID(String authID) {
     this.authID = authID;
+  }
+
+  public Long getID() {
+    return id;
   }
 }

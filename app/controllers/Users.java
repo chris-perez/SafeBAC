@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.Drink;
 import models.User;
 import models.UserToDrink;
+import models.UserToUser;
 import org.joda.time.DateTime;
 import play.Logger;
 import play.api.libs.Codecs;
@@ -75,6 +76,10 @@ public class Users extends Controller {
     return ok(json);
   }
 
+  /**
+   * Updates a users basic information
+   * @return user info as json
+   */
   public static Result updateProfile() {
     response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
     JsonNode body = request().body().asJson();
@@ -152,6 +157,86 @@ public class Users extends Controller {
     ObjectNode json = u.toJson();
     json.put("authID", u.getAuthID());
     return ok(json);
+  }
+
+  /**
+   * Adds a friend by user id
+   * @param id id of the friend to be added
+   * @return no content
+   */
+  public static Result addFriend(Long id) {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return unauthorized(NO_SESSION);
+    }
+
+    User friend = User.find.byId(id);
+    u.addFriend(friend);
+    return noContent();
+  }
+
+  /**
+   * Gets a list of the users friends as json.
+   * @return friends as json
+   */
+  public static Result getFriends() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return unauthorized(NO_SESSION);
+    }
+
+    List<JsonNode> friendsJson = new ArrayList<>();
+    for (User friend : u.getFriends()) {
+      ObjectNode node = friend.toFriendJson();
+      UserToUser u2u = UserToUser.findByUsers(u, friend);
+      //Add friends BAC if it is visible to user
+      if (friend.equals(u2u.getUser2()) && u2u.getUser2IsVisible()) {
+        node.put("bac", friend.getBAC());
+      } else if (friend.equals(u2u.getUser1()) && u2u.getUser1IsVisible()) {
+        node.put("bac", friend.getBAC());
+      }
+
+      //Add if user is visible to friend
+      if (u.equals(u2u.getUser2()) && u2u.getUser2IsVisible()) {
+        node.put("visible", true);
+      } else if (u.equals(u2u.getUser1()) && u2u.getUser1IsVisible()) {
+        node.put("visible", true);
+      } else {
+        node.put("visible", false);
+      }
+
+      friendsJson.add(node);
+    }
+
+    return ok(Json.toJson(friendsJson));
+  }
+
+  /**
+   * Sets a users BAC visibility for the given friend
+   * @param friendID id of friend
+   * @param visible whether or not the user's BAC should be visible to friend
+   * @return no content
+   */
+  public static Result setBACVisibleToFriend(Long friendID, Boolean visible) {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return unauthorized(NO_SESSION);
+    }
+
+    User friend = User.find.byId(friendID);
+    if (friend == null) {
+      return badRequest(INCORRECT_FIELDS);
+    }
+    try {
+      u.setBACVisibleToFriend(friend, visible);
+    } catch (NullPointerException e) {
+      return badRequest(INCORRECT_FIELDS);
+    }
+
+    return noContent();
   }
 
   /**

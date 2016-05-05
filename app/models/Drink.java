@@ -27,6 +27,9 @@ public class Drink extends Model {
     this.save();
   }
 
+  /**
+   * @return JsonNode of important information.
+   */
   public ObjectNode toJson() {
     ObjectNode node = Json.newObject();
     node.put("id", id);
@@ -36,10 +39,20 @@ public class Drink extends Model {
     return node;
   }
 
+  /**
+   * Gets a drink by its id
+   * @param id id of the drink to be found
+   * @return drink with given id
+   */
   public static Drink findByID(Long id) {
     return find.byId(id);
   }
 
+  /**
+   * Gets a drink by its name
+   * @param name name of drink to be found
+   * @return drink with given name
+   */
   public static Drink findByName(String name) {
     return find.where().eq("name", name).findUnique();
   }
