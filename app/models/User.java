@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,7 +63,7 @@ public class User extends Model{
    * Searches for user in database by name
    *
    * @param email email of user to search for
-   * @return if th user exists in the database
+   * @return if the user exists in the database
    */
   public static boolean userExists(String email) {
     return find.where().eq("email", email).findRowCount() > 0;
@@ -131,20 +132,12 @@ public class User extends Model{
     return UserToDrink.find.where().eq("user", this).ge("time", time).orderBy("time desc").findList();
   }
 
-//must write update hours and update alcohol ounces consumed function -> how fast does alcohol filter out of system
-  //^whenever in app or whenever new drink? -> whenever checks it -> runs this function
-  //is graph of BAC over time or oz's of alcohol? Second easier
-  //ounces changeable by person (pint, small glass, next to amounts)
-  //alcConsumed = percentage * total ounces drank -> alcohol ounces drank
-  //static method belongs to class not to any user
-  //4/23 must account for exceptions like not sending something to function or having impossible bac
-  /*BAC calculation
-  returns user's current BAC
-   */
-  //LocalDateTime.now()
-  //DateTime() timestamp
-  //  List<UserToDrink> userToDrinks;
-
+    /**
+     * Calculates user blood alcohol content
+     *
+     * @param id of user
+     * @return bac as double
+     */
   public double calculateBAC(String id) {
     if(getDrinksAfter(DateTime.now().minusHours(4)).isEmpty()) {//if no drinks in list
         return 0;
@@ -159,14 +152,9 @@ public class User extends Model{
     Minutes timePassed = Minutes.minutesBetween(userHasDrunk.get(0).time,timeNow);//calculates how long user has been drinking within that time
     int minutesPassed =  timePassed.getMinutes();//gets minutes passed in this period
     double hoursPassed = (double)minutesPassed / 60;//converts to hours
-    System.out.println(hoursPassed);
-    //Logger.info("hoursPassed", hoursPassed);
-
-
     double ouncesAlcConsumed = 0;
     int lenList = userHasDrunk.size();
     int x = 0;
-    System.out.println(ouncesAlcConsumed);
     while(x < lenList){
       ouncesAlcConsumed += userHasDrunk.get(x).getVolume() * userHasDrunk.get(x).drink.getAbv();
       x++;
@@ -178,11 +166,8 @@ public class User extends Model{
     }else{
       sexRatio = .73;
     }
-    System.out.println(sexRatio);
     double bac = (double)(((double)(ouncesAlcConsumed) * 5.14)/((double)(weight) * sexRatio)) - (.015 * (double)(hoursPassed));//alcohol burns off at about .015 an hour
     bac = (double)Math.round(bac*100)/100;
-    System.out.println(bac);
-
     return bac;
   }
   /**
