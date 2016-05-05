@@ -123,7 +123,7 @@ public class User extends Model{
   }
 
   public List<UserToDrink> getDrinkHistory() {
-    return UserToDrink.find.where().eq("user", this).findList();
+    return UserToDrink.find.where().eq("user", this).orderBy("time desc").findList();
   }
 
   public String getName() {
