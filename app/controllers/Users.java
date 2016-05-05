@@ -77,6 +77,21 @@ public class Users extends Controller {
   }
 
   /**
+   * @return basic profile info of user as json
+   */
+  public static Result getProfile() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    JsonNode body = request().body().asJson();
+
+    User u = Users.fromRequest();
+    if (u == null) {
+      return badRequest(NO_SESSION);
+    }
+
+    return ok(u.toJson());
+  }
+
+  /**
    * Updates a users basic information
    * @return user info as json
    */
@@ -92,6 +107,10 @@ public class Users extends Controller {
     User u = Users.fromRequest();
     if (u == null) {
       return badRequest(NO_SESSION);
+    }
+
+    if (body.has("name")) {
+      u.setName(body.get("name").asText());
     }
 
     if (body.has("email")){
