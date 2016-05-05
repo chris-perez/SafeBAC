@@ -161,19 +161,22 @@ public class Users extends Controller {
 
   /**
    * Adds a friend by user id
-   * @param id id of the friend to be added
+   * @param email email of the friend to be added
    * @return no content
    */
-  public static Result addFriend(Long id) {
+  public static Result addFriend(String email) {
     response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
     User u = Users.fromRequest();
     if (u == null) {
       return unauthorized(NO_SESSION);
     }
 
-    User friend = User.find.byId(id);
+    User friend = User.fromEmail(email);
+    if (friend == null) {
+      return badRequest(INCORRECT_EMAIL);
+    }
     u.addFriend(friend);
-    return noContent();
+    return getFriends();
   }
 
   /**
