@@ -12,10 +12,11 @@ POST        /user/auth           controllers.Users.createUser()
 PUT         /user/auth           controllers.Users.loginUser()
 DELETE      /user/auth           controllers.Users.logoutUser()
 
+GET         /user/profile        controllers.Users.getProfile()
 PUT         /user/profile        controllers.Users.updateProfile()
 
 GET         /user/friends        controllers.Users.getFriends()
-PUT         /user/friends        controllers.Users.addFriend(id: Long)
+PUT         /user/friends        controllers.Users.addFriend(email: String)
 POST        /user/friends        controllers.Users.setBACVisibleToFriend(id: Long, visible: Boolean)
 
 GET         /drinks              controllers.Drinks.getCatalog()

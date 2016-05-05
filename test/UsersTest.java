@@ -132,7 +132,7 @@ public class UsersTest {
   }
 
   @Test
-  public void updateProfile() {
+  public void getProfile() {
     running(fakeApplication(inMemoryDatabase()), new Runnable() {
       @Override
       public void run() {
@@ -142,6 +142,33 @@ public class UsersTest {
             .put("email", TEST_EMAIL)
             .put("name", CHANGE_NAME)
             .put("age", CHANGE_AGE)
+            .put("sex", CHANGE_SEX)
+            .put("weight", CHANGE_WEIGHT);
+        result = callAction(controllers.routes.ref.Users.getProfile(),
+            fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
+        Logger.info("Update Profile Result: " + contentAsString(result));
+        assertThat(status(result)).isEqualTo(OK);
+        JsonNode response = Json.parse(contentAsString(result));
+        assertThat(response.has("email"));
+        assertThat(response.has("name"));
+        assertThat(response.has("birthDate"));
+        assertThat(response.has("sex"));
+        assertThat(response.has("weight"));
+      }
+    });
+  }
+
+  @Test
+  public void updateProfile() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User u = new User("name", TEST_EMAIL, TEST_PASSWORD, TEST_SEX, DateTime.now(), TEST_WEIGHT, TEST_AUTH_TOKEN);
+        // Login
+        request = Json.newObject()
+            .put("email", TEST_EMAIL)
+            .put("name", CHANGE_NAME)
+            .put("birthDate", DateTime.now().minusYears(21).getMillis())
             .put("sex", CHANGE_SEX)
             .put("weight", CHANGE_WEIGHT);
         result = callAction(controllers.routes.ref.Users.updateProfile(),
@@ -160,9 +187,9 @@ public class UsersTest {
         User user1 = new User("name", "email", "password", "male", DateTime.now(), 160, TEST_AUTH_TOKEN);
         User user2 = new User("name2", "email2", "password2", "female", DateTime.now(), 120, "authID2");
 
-        result = callAction(controllers.routes.ref.Users.addFriend(user2.getID()),
+        result = callAction(controllers.routes.ref.Users.addFriend(user2.getEmail()),
             fakeRequest().withHeader("X-Auth-Token", TEST_AUTH_TOKEN));
-        assertThat(status(result)).isEqualTo(NO_CONTENT);
+        assertThat(status(result)).isEqualTo(OK);
       }
     });
   }

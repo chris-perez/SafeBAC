@@ -162,7 +162,7 @@ public class User extends Model{
    * @param friend user to be added as friend
    */
   public void addFriend(User friend) {
-    if (UserToUser.exists(this, friend))
+    if (UserToUser.exists(this, friend) || this == friend)
       return;
 
     UserToUser u2u = new UserToUser(this, friend);
