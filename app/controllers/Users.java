@@ -2,7 +2,9 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.Drink;
 import models.User;
+import models.UserToDrink;
 import org.joda.time.DateTime;
 import play.Logger;
 import play.api.libs.Codecs;
@@ -11,6 +13,9 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import plugins.MersenneGeneratorPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chris_000 on 3/22/2016.

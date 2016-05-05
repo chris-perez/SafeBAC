@@ -5,6 +5,7 @@ import controllers.Drinks;
 import controllers.routes;
 import models.Drink;
 import models.User;
+import models.UserToDrink;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import play.Logger;
@@ -99,9 +100,35 @@ public class DrinksTest {
         Logger.info("Add Drink Result: " + contentAsString(result));
         assertThat(status(result)).isEqualTo(OK);
         content = Json.parse(contentAsString(result));
+      }
+    });
+  }
 
+  @Test
+  public void getDrinkHistory() {
+    running(fakeApplication(inMemoryDatabase()), new Runnable() {
+      @Override
+      public void run() {
+        User u = new User("name", "email", "password", "male", new DateTime(), 160, "authID");
+        Drink d = new Drink("name", .07, "beer");
+        UserToDrink u2d1 = new UserToDrink(u, d, .5, DateTime.now().minusHours(2));
+        UserToDrink u2d2 = new UserToDrink(u, d, .5, DateTime.now().minusHours(1));
+        UserToDrink u2d3 = new UserToDrink(u, d, .5, DateTime.now());
 
-
+        result = callAction(routes.ref.Drinks.getDrinkHistory(),
+            fakeRequest().withHeader("X-Auth-Token", "authID"));
+        assertThat(status(result)).isEqualTo(OK);
+        content = Json.parse(contentAsString(result));
+        Iterator<JsonNode> iterator = content.elements();
+        while (iterator.hasNext()) {
+          JsonNode node = iterator.next();
+          assertThat(node.has("id")).isTrue();
+          assertThat(node.get("name").asText()).isEqualTo(d.getName());
+          assertThat(node.get("abv").asDouble()).isEqualTo(d.getAbv());
+          assertThat(node.get("type").asText()).isEqualTo(d.getType());
+          assertThat(node.has("volume")).isTrue();
+          assertThat(node.has("time")).isTrue();
+        }
       }
     });
   }

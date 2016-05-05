@@ -16,4 +16,6 @@ PUT         /user/profile        controllers.Users.updateProfile()
 
 GET         /drinks              controllers.Drinks.getCatalog()
 PUT         /drinks              controllers.Drinks.addDrink()
+
+GET         /drinks/history      controllers.Drinks.getDrinkHistory()
     

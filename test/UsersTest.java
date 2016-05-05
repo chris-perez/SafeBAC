@@ -2,8 +2,10 @@ import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.Users;
+import controllers.routes;
 import models.Drink;
 import models.User;
+import models.UserToDrink;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,6 +13,8 @@ import play.Logger;
 import play.api.libs.Crypto;
 import play.libs.Json;
 import play.mvc.Result;
+
+import java.util.Iterator;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static play.mvc.Http.Status.OK;

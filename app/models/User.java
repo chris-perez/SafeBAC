@@ -122,6 +122,10 @@ public class User extends Model{
     return bacPercentage; // Added return
   }
 
+  public List<UserToDrink> getDrinkHistory() {
+    return UserToDrink.find.where().eq("user", this).orderBy("time desc").findList();
+  }
+
   public String getName() {
     return name;
   }
