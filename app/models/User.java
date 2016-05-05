@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.h2.mvstore.cache.CacheLongKeyLIRS;
 import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import play.db.ebean.Model;
 import play.libs.Json;
 
@@ -124,26 +125,55 @@ public class User extends Model{
     return .08;
   }
 
-  //must write update hours and update alcohol ounces consumed function -> how fast does alcohol filter out of system
-  //^whenever in app or whenever new drink?
+//must write update hours and update alcohol ounces consumed function -> how fast does alcohol filter out of system
+  //^whenever in app or whenever new drink? -> whenever checks it -> runs this function
   //is graph of BAC over time or oz's of alcohol? Second easier
-  //catalog of drinks must have percentage of alcohol
   //ounces changeable by person (pint, small glass, next to amounts)
   //alcConsumed = percentage * total ounces drank -> alcohol ounces drank
-  //user.getweight
-  public static int calculateBAC(double weight, String id, String sex, double alcConsumed, double hoursPassed) { // Changed void to int
+  //static method belongs to class not to any user
+  //4/23 must account for exceptions like not sending something to function or having impossible bac
+  /*BAC calculation
+  returns user's current BAC
+   */
+  //LocalDateTime.now()
+  //DateTime() timestamp
+  //  List<UserToDrink> userToDrinks;
+
+  public int calculateBAC(String id) {
+    if(userToDrinks.isEmpty()) {//if no drinks in list
+      return 0;
+    }
+
+    DateTime timeNow = DateTime.now();
+
+    List<UserToDrink> userHasDrunk = UserToDrink.getDrinksWithin(this, 4);//returns list of drinks that user has drunk in last 4 hours (average filters out in 2 or so, this is safe estimate)
+    Minutes timePassed = Minutes.minutesBetween(userHasDrunk.get(0).time,timeNow);//calculates how long user has been drinking within that time
+    int minutesPassed =  timePassed.getMinutes();//gets minutes passed in this period
+    double hoursPassed = minutesPassed / 60;//converts to hours
+
+    if(userHasDrunk.isEmpty()){//if no drinks in past 4 hours
+      return 0;
+    }
+
+    double ouncesAlcConsumed = 0;
+    int lenList = userHasDrunk.size();
+    int x = 0;
+    while(x < lenList){
+      ouncesAlcConsumed += userHasDrunk.get(x).volume * userHasDrunk.get(0).drink.abv;
+      x++;
+    }
+
     double sexRatio;
     if(sex.equals("female")) {
       sexRatio = .66;
     }else{
       sexRatio = .73;
     }
-    double bac = ((alcConsumed * 5.14)/(weight * sexRatio)) - (.015 * hoursPassed);//alcohol burns off at about .015 an hour
-    int bacPercentage = (int)(bac*100);
-    System.out.println("You have "+ bacPercentage+"% BAC");
-    return bacPercentage; // Added return
-  }
 
+    double bac = ((ouncesAlcConsumed * 5.14)/(weight * sexRatio)) - (.015 * hoursPassed);//alcohol burns off at about .015 an hour
+    int bacPercentage = (int)(bac*100);
+    return bacPercentage;
+  }
   /**
    * Adds a user as a friend to userToUsers
    * @param friend user to be added as friend
