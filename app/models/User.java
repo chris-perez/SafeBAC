@@ -125,6 +125,10 @@ public class User extends Model{
     return .08;
   }
 
+  public List<UserToDrink> getDrinksAfter(DateTime time) {
+    return UserToDrink.find.where().eq("user", this).ge("time", time).orderBy("time desc").findList();
+  }
+
 //must write update hours and update alcohol ounces consumed function -> how fast does alcohol filter out of system
   //^whenever in app or whenever new drink? -> whenever checks it -> runs this function
   //is graph of BAC over time or oz's of alcohol? Second easier
@@ -146,7 +150,7 @@ public class User extends Model{
 
     DateTime timeNow = DateTime.now();
 
-    List<UserToDrink> userHasDrunk = UserToDrink.getDrinksWithin(this, 4);//returns list of drinks that user has drunk in last 4 hours (average filters out in 2 or so, this is safe estimate)
+    List<UserToDrink> userHasDrunk = getDrinksAfter(timeNow.minusHours(4));//returns list of drinks that user has drunk in last 4 hours (average filters out in 2 or so, this is safe estimate)
     Minutes timePassed = Minutes.minutesBetween(userHasDrunk.get(0).time,timeNow);//calculates how long user has been drinking within that time
     int minutesPassed =  timePassed.getMinutes();//gets minutes passed in this period
     double hoursPassed = minutesPassed / 60;//converts to hours
