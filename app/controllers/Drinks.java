@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.Files;
 import models.Drink;
 import models.User;
+import models.UserToDrink;
 import play.Logger;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -64,6 +65,32 @@ public class Drinks extends Controller {
     }
 
     return ok(Json.toJson(drinksJson));
+  }
+
+  /**
+   * Gets a list of all drinks previously added
+   * @return list drinks as json
+   */
+  public static Result getDrinkHistory() {
+    response().setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    User u = Users.fromRequest();
+    if (u == null) {
+      return unauthorized(NO_SESSION);
+    }
+    List<JsonNode> history = new ArrayList<>();
+    for (UserToDrink u2d : u.getDrinkHistory()) {
+      ObjectNode node = Json.newObject();
+      Drink d = u2d.getDrink();
+      node.put("id", u2d.getId());
+      node.put("name", d.getName());
+      node.put("abv", d.getAbv());
+      node.put("type", d.getType());
+      node.put("volume", u2d.getVolume());
+      node.put("time", u2d.getTime().getMillis());
+      history.add(node);
+    }
+
+    return ok(Json.toJson(history));
   }
 
   /**

@@ -20,4 +20,6 @@ POST        /user/friends        controllers.Users.setBACVisibleToFriend(id: Lon
 
 GET         /drinks              controllers.Drinks.getCatalog()
 PUT         /drinks              controllers.Drinks.addDrink()
+
+GET         /drinks/history      controllers.Drinks.getDrinkHistory()
     

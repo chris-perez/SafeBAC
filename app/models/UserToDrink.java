@@ -17,6 +17,7 @@ public class UserToDrink extends Model {
   Long id;
   @ManyToOne
   User user;
+  @ManyToOne
   Drink drink;
   Double volume;
   DateTime time;
@@ -33,5 +34,17 @@ public class UserToDrink extends Model {
 
   public Long getId() {
     return id;
+  }
+
+  public Drink getDrink() {
+    return drink;
+  }
+
+  public Double getVolume() {
+    return volume;
+  }
+
+  public DateTime getTime() {
+    return time;
   }
 }
