@@ -52,6 +52,11 @@ public class User extends Model{
     this.save();
   }
 
+  /**
+   * Adds a drink to the users drink log by creating a new UserToDrink object.
+   * @param drink drink to be added
+   * @param volume amount of drink consumed
+   */
   public void addDrink(Drink drink, Double volume) {
     UserToDrink u2d = new UserToDrink(this, drink, volume, DateTime.now());
     this.userToDrinks.add(u2d);
@@ -120,6 +125,11 @@ public class User extends Model{
     return node;
   }
 
+  /**
+   * Gets a list of UserToDrink objects representing drinks consumed after the given time.
+   * @param time time after which to get drinks for
+   * @return list of UserToDrinks logged after given time
+   */
   public List<UserToDrink> getDrinksAfter(DateTime time) {
     return UserToDrink.find.where().eq("user", this).ge("time", time).orderBy("time desc").findList();
   }
@@ -198,6 +208,9 @@ public class User extends Model{
     }
   }
 
+  /**
+   * @return list of all UserToDrinks that have been logged.
+   */
   public List<UserToDrink> getDrinkHistory() {
     return UserToDrink.find.where().eq("user", this).orderBy("time desc").findList();
   }

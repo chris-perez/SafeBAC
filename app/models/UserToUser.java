@@ -40,19 +40,31 @@ public class UserToUser extends Model {
     return user2;
   }
 
+  /**
+   * @return if user1's bac is visible to user2
+   */
   public Boolean getUser1IsVisible() {
     return user1IsVisible;
   }
 
+  /**
+   * @param user1IsVisible if user1's bac is visible to user2
+   */
   public void setUser1IsVisible(Boolean user1IsVisible) {
     this.user1IsVisible = user1IsVisible;
     this.save();
   }
 
+  /**
+   * @return if user2's bac is visible to user1
+   */
   public Boolean getUser2IsVisible() {
     return user2IsVisible;
   }
 
+  /**
+   * @param user2IsVisible if user2's bac is visible to user1
+   */
   public void setUser2IsVisible(Boolean user2IsVisible) {
     this.user2IsVisible = user2IsVisible;
     this.save();
